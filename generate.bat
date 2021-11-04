@@ -1,0 +1,1 @@
+protoc agentero/resources/protos/policy_holder.proto --go_out=plugins=grpc:.
