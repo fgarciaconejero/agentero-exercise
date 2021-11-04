@@ -11,17 +11,28 @@ import (
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := connectToServer()
 	if err != nil {
-		log.Fatalf("Could not connect to server: %v\n", err)
+		log.Fatalf("Could not connect to server: %v", err)
 	}
 	defer conn.Close()
 
-	client := policy_holder_pb.NewPolicyHoldersServiceClient(conn)
-	fmt.Printf("Created client: %f\n", client)
+	client := newClient(conn)
+	fmt.Printf("Created client: %f\n\n", client)
 
+	handleRequests(client)
+}
+
+func connectToServer() (*grpc.ClientConn, error) {
+	return grpc.Dial("localhost:50051", grpc.WithInsecure())
+}
+
+func newClient(conn *grpc.ClientConn) policy_holder_pb.PolicyHoldersServiceClient {
+	return policy_holder_pb.NewPolicyHoldersServiceClient(conn)
+}
+
+func handleRequests(client policy_holder_pb.PolicyHoldersServiceClient) {
 	g := gin.Default()
-
 	g.GET("/getById/:id", func(ctx *gin.Context) {
 		req := &policy_holder_pb.GetContactAndPoliciesByIdRequest{
 			InsuranceAgentId: ctx.Param("id"),
