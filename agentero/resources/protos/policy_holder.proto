@@ -1,0 +1,37 @@
+syntax="proto3";
+
+package policy_holder;
+option go_package="agentero/resources/protos";
+
+message PolicyHolder {
+    string name = 1;
+    string mobile_number = 2;
+    repeated InsurancePolicy insurance_policy = 3;
+}
+
+message InsurancePolicy {
+    string mobile_number = 1;
+    int32 premium = 2;
+    string type = 3;
+}
+
+message GetContactAndPoliciesByIdRequest {
+    string insuranceAgentId = 1;
+}
+
+message GetContactAndPoliciesByIdResponse {
+    repeated PolicyHolder policy_holders = 1;
+}
+
+message GetContactsAndPoliciesByMobileNumberRequest {
+    string mobile_number = 1;
+}
+
+message GetContactsAndPoliciesByMobileNumberResponse {
+    PolicyHolder policy_holder = 1;
+}
+
+service PolicyHoldersService {
+    rpc GetContactAndPoliciesById (GetContactAndPoliciesByIdRequest) returns (GetContactAndPoliciesByIdResponse) {}
+    rpc GetContactsAndPoliciesByMobileNumber (GetContactsAndPoliciesByMobileNumberRequest) returns (GetContactsAndPoliciesByMobileNumberResponse) {}
+}
