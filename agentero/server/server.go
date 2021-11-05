@@ -31,12 +31,12 @@ type server struct{}
 func (*server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
 	service := &service.Service{}
 
-	phs, err := service.GetPolicyHoldersFromAms("some-agent-id")
+	phs, err := service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
 	}
 
-	ips, err := service.GetInsurancePoliciesFromAms("some-agent-id")
+	ips, err := service.GetInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
