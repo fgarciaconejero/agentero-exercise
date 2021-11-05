@@ -14,12 +14,14 @@ import (
 
 func TestGetContactAndPoliciesById(t *testing.T) {
 	initializeAmsMockApi()
+
 	s := &server{}
 	req := protos.GetContactAndPoliciesByIdRequest{
 		InsuranceAgentId: "some-id",
 	}
+
 	res, err := s.GetContactAndPoliciesById(context.Background(), &req)
-	if res == nil || err != nil {
+	if err != nil {
 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
 	}
 }
