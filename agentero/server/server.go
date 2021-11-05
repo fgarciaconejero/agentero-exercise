@@ -26,17 +26,18 @@ func main() {
 	}
 }
 
-type server struct{}
+type server struct {
+	Service *service.Service
+}
 
-func (*server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
-	service := &service.Service{}
-
-	phs, err := service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
+func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
+	s.initializeService()
+	phs, err := s.Service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
 	}
 
-	ips, err := service.GetInsurancePoliciesFromAms(req.InsuranceAgentId)
+	ips, err := s.Service.GetInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
@@ -49,4 +50,9 @@ func (*server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetCon
 
 func (*server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
 	return nil, nil
+}
+
+// This method is needed to be able to mock the service in the tests for the two functions above
+func (s *server) initializeService() {
+	s.Service = &service.Service{}
 }
