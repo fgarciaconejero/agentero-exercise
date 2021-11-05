@@ -42,9 +42,7 @@ func handleRequests(client protos.PolicyHoldersServiceClient) {
 		if err != nil {
 			log.Fatalf("Something went wrong while trying to get contact and policies by id: %v\n", err)
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"result": fmt.Sprint(res.PolicyHolders),
-		})
+		ctx.JSON(http.StatusOK, res.PolicyHolders)
 	})
 
 	g.GET("getByMobileNumber/:mn", func(ctx *gin.Context) {
@@ -56,9 +54,7 @@ func handleRequests(client protos.PolicyHoldersServiceClient) {
 		if err != nil {
 			log.Fatalf("Something went wrong while trying to get contact and policies by mobile number: %v\n", err)
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"result": fmt.Sprint(res.PolicyHolder),
-		})
+		ctx.JSON(http.StatusOK, res.PolicyHolder)
 	})
 
 	if err := g.Run("localhost:8080"); err != nil {
