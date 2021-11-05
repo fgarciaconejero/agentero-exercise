@@ -47,6 +47,20 @@ func handleRequests(client policy_holder_pb.PolicyHoldersServiceClient) {
 		})
 	})
 
+	g.GET("getByMobileNumber/:mn", func(ctx *gin.Context) {
+		req := &policy_holder_pb.GetContactsAndPoliciesByMobileNumberRequest{
+			MobileNumber: ctx.Param("mn"),
+		}
+
+		res, err := client.GetContactsAndPoliciesByMobileNumber(ctx, req)
+		if err != nil {
+			log.Fatalf("Something went wrong while trying to get contact and policies by mobile number: %v\n", err)
+		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"result": fmt.Sprint(res.PolicyHolder),
+		})
+	})
+
 	if err := g.Run("localhost:8080"); err != nil {
 		log.Fatalf("Failed to run server: %v\n", err)
 	}
