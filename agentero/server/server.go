@@ -19,7 +19,7 @@ func main() {
 
 	s := grpc.NewServer()
 	protos.RegisterPolicyHoldersServiceServer(s, &server{})
-	fmt.Printf("Created server: %v\n", s)
+	fmt.Println("Created server successfuly!")
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)

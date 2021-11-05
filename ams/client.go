@@ -20,9 +20,7 @@ func handleRequests() {
 	})
 
 	g.GET("/policies/:agentId", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"policy_holder": mocks.Policies,
-		})
+		ctx.JSON(http.StatusOK, mocks.Policies)
 	})
 
 	if err := g.Run("localhost:8081"); err != nil {
