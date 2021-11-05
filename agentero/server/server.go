@@ -47,9 +47,7 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 	}
 
 	// Remove every character that is not a number from Mobile Numbers
-	filterMobileNumberRegexp := filterMobileNumberRegexp()
-	formatMobileNumbersFromInsurancePolicies(ips, filterMobileNumberRegexp)
-	formatMobileNumbersFromPolicyHolders(phs, filterMobileNumberRegexp)
+	filterMobileNumbers(phs, ips)
 
 	mapPoliciesToHolders(ips, phs)
 
@@ -58,8 +56,34 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 	}, nil
 }
 
-func (*server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
+func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
+	phs, err := s.Service.GetPolicyHoldersFromAms("1")
+	if err != nil {
+		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
+	}
+
+	ips, err := s.Service.GetInsurancePoliciesFromAms("1")
+	if err != nil {
+		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
+	}
+
+	// Remove every character that is not a number from Mobile Numbers
+	filterMobileNumbers(phs, ips)
+
 	return nil, nil
+}
+
+func filterMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
+	// This regexp filters everything but numbers out
+	reg, err := regexp.Compile("[^0-9]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	formatMobileNumbersFromInsurancePolicies(ips, reg)
+	formatMobileNumbersFromPolicyHolders(phs, reg)
+
+	return reg
 }
 
 func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHolder) {
@@ -82,14 +106,4 @@ func formatMobileNumbersFromPolicyHolders(phs []*protos.PolicyHolder, reg *regex
 	for i, v := range phs {
 		phs[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
 	}
-}
-
-func filterMobileNumberRegexp() *regexp.Regexp {
-	// This regexp filters everything but numbers out
-	reg, err := regexp.Compile("[^0-9]+")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return reg
 }
