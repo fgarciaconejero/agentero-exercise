@@ -44,11 +44,22 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
-	fmt.Println(ips)
+
+	mapPoliciesToHolders(ips, phs)
 
 	return &protos.GetContactAndPoliciesByIdResponse{
 		PolicyHolders: phs,
 	}, nil
+}
+
+func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHolder) {
+	for _, iPolicy := range ips {
+		for _, pHolder := range phs {
+			if iPolicy.MobileNumber == pHolder.MobileNumber {
+				pHolder.InsurancePolicy = append(pHolder.InsurancePolicy, iPolicy)
+			}
+		}
+	}
 }
 
 func (*server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
