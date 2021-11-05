@@ -44,7 +44,7 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	s := NewServer(&mockService{})
 	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
-		MobileNumber: "some-mobile-number",
+		MobileNumber: "43",
 	}
 
 	res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)

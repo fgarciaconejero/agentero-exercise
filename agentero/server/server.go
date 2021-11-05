@@ -48,7 +48,6 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 
 	// Remove every character that is not a number from Mobile Numbers
 	filterMobileNumbers(phs, ips)
-
 	mapPoliciesToHolders(ips, phs)
 
 	return &protos.GetContactAndPoliciesByIdResponse{
@@ -69,8 +68,22 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 
 	// Remove every character that is not a number from Mobile Numbers
 	filterMobileNumbers(phs, ips)
+	mapPoliciesToHolders(ips, phs)
 
-	return nil, nil
+	ph := filterPolicyHolderByMobileNumber(phs, req.MobileNumber)
+
+	return &protos.GetContactsAndPoliciesByMobileNumberResponse{
+		PolicyHolder: ph,
+	}, nil
+}
+
+func filterPolicyHolderByMobileNumber(phs []*protos.PolicyHolder, mobileNumber string) *protos.PolicyHolder {
+	for _, v := range phs {
+		if v.MobileNumber == mobileNumber {
+			return v
+		}
+	}
+	return nil
 }
 
 func filterMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
