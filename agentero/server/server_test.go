@@ -42,13 +42,32 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 }
 
 func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
-	s := &server{}
+	s := NewServer(&mockService{})
 	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
 		MobileNumber: "some-mobile-number",
 	}
+
 	res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
-	if res != nil || err != nil {
+	if err != nil {
 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
+	}
+
+	expected := &protos.GetContactsAndPoliciesByMobileNumberResponse{
+		PolicyHolder: &protos.PolicyHolder{
+			Name:         "John",
+			MobileNumber: "43",
+			InsurancePolicy: []*protos.InsurancePolicy{
+				{
+					MobileNumber: "43",
+					Premium:      500,
+					Type:         "homeowner",
+				},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(res, expected) {
+		t.Errorf("Test failure! res: %v,\n expected: %v\n", res, expected)
 	}
 }
 
