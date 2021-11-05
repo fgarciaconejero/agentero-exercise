@@ -33,3 +33,25 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder,
 
 	return policyHolders, nil
 }
+
+func (*Service) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
+	resp, err := http.Get("http://localhost:8081/policies/" + agentId)
+	if err != nil {
+		log.Fatalln(err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	insurancePolicies := []*protos.InsurancePolicy{}
+	err = json.Unmarshal(body, &insurancePolicies)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return insurancePolicies, nil
+}
