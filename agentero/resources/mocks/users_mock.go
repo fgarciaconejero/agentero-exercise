@@ -22,4 +22,5 @@ var Users = []protos.PolicyHolder{
 	{
 		Name:         "user5",
 		MobileNumber: "123-456-7894",
-	}}
+	},
+}
