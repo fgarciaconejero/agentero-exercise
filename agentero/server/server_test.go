@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/agentero-exercise/agentero/resources/protos"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGetContactAndPoliciesById(t *testing.T) {
@@ -44,50 +43,55 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 }
 
 // TODO: turn this into parameterized tests
-func TestGetContactsAndPoliciesByMobileNumber_Success(t *testing.T) {
-	s := NewServer(&mockService{})
-	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
-		MobileNumber: "43",
-	}
-
-	res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
-	if err != nil {
-		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
-	}
-
-	expected := &protos.GetContactsAndPoliciesByMobileNumberResponse{
-		PolicyHolder: &protos.PolicyHolder{
-			Name:         "John",
-			MobileNumber: "43",
-			InsurancePolicy: []*protos.InsurancePolicy{
-				{
-					MobileNumber: "43",
-					Premium:      500,
-					Type:         "homeowner",
+var getByMobileNumberTestingParameters = []struct {
+	name         string
+	mobileNumber string
+	expected     *protos.GetContactsAndPoliciesByMobileNumberResponse
+	err          error
+}{
+	{
+		// TODO: Something is failing here, when using 42 this should fail as the one below
+		"successful",
+		"42",
+		&protos.GetContactsAndPoliciesByMobileNumberResponse{
+			PolicyHolder: &protos.PolicyHolder{
+				Name:         "John",
+				MobileNumber: "43",
+				InsurancePolicy: []*protos.InsurancePolicy{
+					{
+						MobileNumber: "43",
+						Premium:      500,
+						Type:         "homeowner",
+					},
 				},
 			},
 		},
-	}
-
-	if !reflect.DeepEqual(res, expected) {
-		t.Errorf("Test failure! res: %v,\n expected: %v\n", res, expected)
-	}
+		nil,
+	},
+	{
+		"policy holder not found",
+		"42",
+		nil,
+		errors.New("policy holder not found"),
+	},
 }
 
-func TestGetContactsAndPoliciesByMobileNumber_PolicyHolderNotFound(t *testing.T) {
-	s := NewServer(&mockService{})
-	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
-		MobileNumber: "42",
+func GetContactsAndPoliciesByMobileNumberTest(t *testing.T) {
+	for _, tt := range getByMobileNumberTestingParameters {
+		s := NewServer(&mockService{})
+		req := protos.GetContactsAndPoliciesByMobileNumberRequest{
+			MobileNumber: tt.mobileNumber,
+		}
+
+		res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
+		if err != tt.err {
+			t.Errorf("Test failure! res: %v, err: %v\n", res, err)
+		}
+
+		if !reflect.DeepEqual(res, tt.expected) {
+			t.Errorf("Test failure! res: %v,\n expected: %v\n", res, tt.expected)
+		}
 	}
-
-	res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
-	if err == nil {
-		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
-	}
-
-	assert.Equal(t,
-		errors.New("policy holder not found"), err)
-
 }
 
 type mockService struct{}
