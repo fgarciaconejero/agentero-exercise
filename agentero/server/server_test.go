@@ -41,6 +41,7 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 	}
 }
 
+// TODO: turn this into parameterized tests
 func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	s := NewServer(&mockService{})
 	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
