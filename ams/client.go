@@ -16,7 +16,7 @@ func handleRequests() {
 	g := gin.Default()
 
 	g.GET("/users/:agentid", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, &mocks.Users)
+		ctx.JSON(http.StatusOK, mocks.Users)
 	})
 
 	g.GET("/policies/:agentId", func(ctx *gin.Context) {
