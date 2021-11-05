@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
 	"testing"
 
+	"github.com/agentero-exercise/agentero/resources/mocks"
 	"github.com/agentero-exercise/agentero/resources/protos"
+	"github.com/gin-gonic/gin"
 )
 
 func TestGetContactAndPoliciesById(t *testing.T) {
@@ -29,20 +33,20 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	}
 }
 
-// func initializeAmsMockApi() {
-// 	g := gin.Default()
+func initializeAmsMockApi() {
+	g := gin.Default()
 
-// 	g.GET("/users/:agentid", func(ctx *gin.Context) {
-// 		ctx.JSON(http.StatusOK, &mocks.Users)
-// 	})
+	g.GET("/users/:agentid", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, &mocks.Users)
+	})
 
-// 	g.GET("/policies/:agentId", func(ctx *gin.Context) {
-// 		ctx.JSON(http.StatusOK, gin.H{
-// 			"policy_holder": mocks.Policies,
-// 		})
-// 	})
+	g.GET("/policies/:agentId", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"policy_holder": mocks.Policies,
+		})
+	})
 
-// 	if err := g.Run("localhost:8081"); err != nil {
-// 		log.Fatalf("Failed to run server: %v", err)
-// 	}
-// }
+	if err := g.Run("localhost:8081"); err != nil {
+		log.Fatalf("Failed to run server: %v", err)
+	}
+}
