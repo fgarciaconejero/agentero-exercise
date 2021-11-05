@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"testing"
 
 	"github.com/agentero-exercise/agentero/resources/protos"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetContactAndPoliciesById(t *testing.T) {
@@ -42,7 +44,7 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 }
 
 // TODO: turn this into parameterized tests
-func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
+func TestGetContactsAndPoliciesByMobileNumber_Success(t *testing.T) {
 	s := NewServer(&mockService{})
 	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
 		MobileNumber: "43",
@@ -70,6 +72,22 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	if !reflect.DeepEqual(res, expected) {
 		t.Errorf("Test failure! res: %v,\n expected: %v\n", res, expected)
 	}
+}
+
+func TestGetContactsAndPoliciesByMobileNumber_PolicyHolderNotFound(t *testing.T) {
+	s := NewServer(&mockService{})
+	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
+		MobileNumber: "42",
+	}
+
+	res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
+	if err == nil {
+		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
+	}
+
+	assert.Equal(t,
+		errors.New("policy holder not found"), err)
+
 }
 
 type mockService struct{}

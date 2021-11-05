@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -71,20 +72,23 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
-	ph := filterPolicyHolderByMobileNumber(phs, req.MobileNumber)
+	ph, err := filterPolicyHolderByMobileNumber(phs, req.MobileNumber)
+	if err != nil {
+		return nil, err
+	}
 
 	return &protos.GetContactsAndPoliciesByMobileNumberResponse{
 		PolicyHolder: ph,
 	}, nil
 }
 
-func filterPolicyHolderByMobileNumber(phs []*protos.PolicyHolder, mobileNumber string) *protos.PolicyHolder {
+func filterPolicyHolderByMobileNumber(phs []*protos.PolicyHolder, mobileNumber string) (*protos.PolicyHolder, error) {
 	for _, v := range phs {
 		if v.MobileNumber == mobileNumber {
-			return v
+			return v, nil
 		}
 	}
-	return nil
+	return nil, errors.New("policy holder not found")
 }
 
 func filterMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
