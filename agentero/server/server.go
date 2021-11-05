@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"regexp"
 
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/agentero-exercise/agentero/service"
@@ -45,11 +46,20 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
 
+	// Remove every character that is not a number from Mobile Numbers
+	filterMobileNumberRegexp := filterMobileNumberRegexp()
+	formatMobileNumbersFromInsurancePolicies(ips, filterMobileNumberRegexp)
+	formatMobileNumbersFromPolicyHolders(phs, filterMobileNumberRegexp)
+
 	mapPoliciesToHolders(ips, phs)
 
 	return &protos.GetContactAndPoliciesByIdResponse{
 		PolicyHolders: phs,
 	}, nil
+}
+
+func (*server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
+	return nil, nil
 }
 
 func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHolder) {
@@ -62,6 +72,24 @@ func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHol
 	}
 }
 
-func (*server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
-	return nil, nil
+func formatMobileNumbersFromInsurancePolicies(ips []*protos.InsurancePolicy, reg *regexp.Regexp) {
+	for i, v := range ips {
+		ips[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
+	}
+}
+
+func formatMobileNumbersFromPolicyHolders(phs []*protos.PolicyHolder, reg *regexp.Regexp) {
+	for i, v := range phs {
+		phs[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
+	}
+}
+
+func filterMobileNumberRegexp() *regexp.Regexp {
+	// This regexp filters everything but numbers out
+	reg, err := regexp.Compile("[^0-9]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return reg
 }
