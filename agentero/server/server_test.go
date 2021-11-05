@@ -4,12 +4,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/agentero-go/policy_holder/policy_holder_pb"
+	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
 func TestGetContactAndPoliciesById(t *testing.T) {
 	s := &server{}
-	req := policy_holder_pb.GetContactAndPoliciesByIdRequest{
+	req := protos.GetContactAndPoliciesByIdRequest{
 		InsuranceAgentId: "some-id",
 	}
 	res, err := s.GetContactAndPoliciesById(context.Background(), &req)
@@ -20,7 +20,7 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 
 func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	s := &server{}
-	req := policy_holder_pb.GetContactsAndPoliciesByMobileNumberRequest{
+	req := protos.GetContactsAndPoliciesByMobileNumberRequest{
 		MobileNumber: "some-mobile-number",
 	}
 	res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
@@ -28,3 +28,21 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
 	}
 }
+
+// func initializeAmsMockApi() {
+// 	g := gin.Default()
+
+// 	g.GET("/users/:agentid", func(ctx *gin.Context) {
+// 		ctx.JSON(http.StatusOK, &mocks.Users)
+// 	})
+
+// 	g.GET("/policies/:agentId", func(ctx *gin.Context) {
+// 		ctx.JSON(http.StatusOK, gin.H{
+// 			"policy_holder": mocks.Policies,
+// 		})
+// 	})
+
+// 	if err := g.Run("localhost:8081"); err != nil {
+// 		log.Fatalf("Failed to run server: %v", err)
+// 	}
+// }

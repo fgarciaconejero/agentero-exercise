@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/agentero-go/policy_holder/policy_holder_pb"
+	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
@@ -27,14 +27,14 @@ func connectToServer() (*grpc.ClientConn, error) {
 	return grpc.Dial("localhost:50051", grpc.WithInsecure())
 }
 
-func newClient(conn *grpc.ClientConn) policy_holder_pb.PolicyHoldersServiceClient {
-	return policy_holder_pb.NewPolicyHoldersServiceClient(conn)
+func newClient(conn *grpc.ClientConn) protos.PolicyHoldersServiceClient {
+	return protos.NewPolicyHoldersServiceClient(conn)
 }
 
-func handleRequests(client policy_holder_pb.PolicyHoldersServiceClient) {
+func handleRequests(client protos.PolicyHoldersServiceClient) {
 	g := gin.Default()
 	g.GET("/getById/:id", func(ctx *gin.Context) {
-		req := &policy_holder_pb.GetContactAndPoliciesByIdRequest{
+		req := &protos.GetContactAndPoliciesByIdRequest{
 			InsuranceAgentId: ctx.Param("id"),
 		}
 
@@ -48,7 +48,7 @@ func handleRequests(client policy_holder_pb.PolicyHoldersServiceClient) {
 	})
 
 	g.GET("getByMobileNumber/:mn", func(ctx *gin.Context) {
-		req := &policy_holder_pb.GetContactsAndPoliciesByMobileNumberRequest{
+		req := &protos.GetContactsAndPoliciesByMobileNumberRequest{
 			MobileNumber: ctx.Param("mn"),
 		}
 
