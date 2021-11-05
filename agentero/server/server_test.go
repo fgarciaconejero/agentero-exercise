@@ -9,7 +9,7 @@ import (
 
 func TestGetContactAndPoliciesById(t *testing.T) {
 
-	s := &server{}
+	s := NewServer(&mockService{})
 	req := protos.GetContactAndPoliciesByIdRequest{
 		InsuranceAgentId: "some-id",
 	}
@@ -29,4 +29,15 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	if res != nil || err != nil {
 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
 	}
+}
+
+type mockService struct{}
+
+func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
+
+	return nil, nil
+}
+
+func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
+	return nil, nil
 }

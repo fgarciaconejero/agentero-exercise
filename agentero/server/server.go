@@ -27,10 +27,10 @@ func main() {
 }
 
 type server struct {
-	Service *service.Service
+	Service service.IService
 }
 
-func NewServer(service *service.Service) *server {
+func NewServer(service service.IService) *server {
 	return &server{Service: service}
 }
 
