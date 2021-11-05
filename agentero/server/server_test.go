@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/agentero-exercise/agentero/resources/mocks"
 	"github.com/agentero-exercise/agentero/resources/protos"
@@ -12,12 +13,13 @@ import (
 )
 
 func TestGetContactAndPoliciesById(t *testing.T) {
+	initializeAmsMockApi()
 	s := &server{}
 	req := protos.GetContactAndPoliciesByIdRequest{
 		InsuranceAgentId: "some-id",
 	}
 	res, err := s.GetContactAndPoliciesById(context.Background(), &req)
-	if res != nil || err != nil {
+	if res == nil || err != nil {
 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
 	}
 }
@@ -46,7 +48,11 @@ func initializeAmsMockApi() {
 		})
 	})
 
-	if err := g.Run("localhost:8081"); err != nil {
-		log.Fatalf("Failed to run server: %v", err)
-	}
+	go func() {
+		if err := g.Run("localhost:8081"); err != nil {
+			log.Fatalf("Failed to run server: %v", err)
+		}
+		time.Sleep(5 * time.Second)
+	}()
+
 }
