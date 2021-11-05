@@ -18,7 +18,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	protos.RegisterPolicyHoldersServiceServer(s, &server{})
+	protos.RegisterPolicyHoldersServiceServer(s, NewServer(&service.Service{}))
 	fmt.Println("Created server successfuly!")
 
 	if err := s.Serve(lis); err != nil {
@@ -30,8 +30,11 @@ type server struct {
 	Service *service.Service
 }
 
+func NewServer(service *service.Service) *server {
+	return &server{Service: service}
+}
+
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
-	s.initializeService()
 	phs, err := s.Service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
@@ -50,9 +53,4 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 
 func (*server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
 	return nil, nil
-}
-
-// This method is needed to be able to mock the service in the tests for the two functions above
-func (s *server) initializeService() {
-	s.Service = &service.Service{}
 }
