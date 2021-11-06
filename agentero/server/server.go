@@ -98,6 +98,7 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 
 // TODO: This should retrieve from db, not ams
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
+	// TODO: Add service and respository methods to interfaces, implementation of both service and repository too
 	return &protos.GetContactsAndPoliciesByMobileNumberResponse{}, nil
 }
 
