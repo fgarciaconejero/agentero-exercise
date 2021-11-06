@@ -15,6 +15,7 @@ func main() {
 func handleRequests() {
 	g := gin.Default()
 
+	// TODO: Make it so that this endpoint and the one below filter out by agentId
 	g.GET("/users/:agentid", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, mocks.Users)
 	})
