@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -93,16 +92,6 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 // TODO: This should retrieve from db, not ams
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
 	return &protos.GetContactsAndPoliciesByMobileNumberResponse{}, nil
-}
-
-// Returns the first policy holder whose mobile number matches the desired one, otherwise it returns an error
-func filterPolicyHolderByMobileNumber(phs []*protos.PolicyHolder, mobileNumber string) (*protos.PolicyHolder, error) {
-	for _, v := range phs {
-		if v.MobileNumber == mobileNumber {
-			return v, nil
-		}
-	}
-	return nil, errors.New("policy holder not found")
 }
 
 // Removes every character that is not a number from Mobile Numbers of both Insurance Policies and Policy Holders
