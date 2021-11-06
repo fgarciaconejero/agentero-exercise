@@ -21,7 +21,7 @@ func main() {
 
 	r, err := repository.NewRepository()
 	if err != nil {
-		log.Fatalln("There was an error while creating a new server: ", err)
+		log.Fatalln("There was an error while creating a new repository: ", err)
 	}
 	srv := NewServer(service.NewService(r))
 	s := grpc.NewServer()
