@@ -13,6 +13,14 @@ import (
 	"google.golang.org/grpc"
 )
 
+type server struct {
+	Service service.IService
+}
+
+func NewServer(s service.IService) *server {
+	return &server{Service: s}
+}
+
 // TODO: Add logs
 func main() {
 	lis, err := net.Listen("tcp", ":50051")
@@ -66,14 +74,6 @@ func main() {
 	}
 }
 
-type server struct {
-	Service service.IService
-}
-
-func NewServer(s service.IService) *server {
-	return &server{Service: s}
-}
-
 func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*protos.PolicyHolder, error) {
 	phs, err := s.Service.GetPolicyHoldersFromAms(id)
 	if err != nil {
@@ -85,7 +85,7 @@ func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*prot
 		return nil, err
 	}
 
-	filterMobileNumbers(phs, ips)
+	formatMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
 	return phs, nil
@@ -114,7 +114,7 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 }
 
 // Removes every character that is not a number from Mobile Numbers of both Insurance Policies and Policy Holders
-func filterMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
+func formatMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
 	// This regexp filters everything but numbers out
 	reg, err := regexp.Compile("[^0-9]+")
 	if err != nil {
