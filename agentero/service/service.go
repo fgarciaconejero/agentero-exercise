@@ -98,6 +98,10 @@ func (s *Service) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.Poli
 	return s.repository.GetById(id)
 }
 
+func (s *Service) GetContactAndPoliciesByMobileNumberFromSQLite(mobileNumber string) (*protos.PolicyHolder, error) {
+	return s.repository.GetByMobileNumber(mobileNumber)
+}
+
 func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder, agentId string) error {
 	for _, ph := range phs {
 		err := s.repository.UpsertPolicyHolder(ph)
