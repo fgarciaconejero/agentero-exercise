@@ -64,7 +64,7 @@ func (*Service) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insurance
 }
 
 func (s *Service) GetAllInsuranceAgentsIds() ([]string, error) {
-	return s.GetAllInsuranceAgentsIds()
+	return s.repository.GetAllInsuranceAgentsIds()
 }
 
 func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
