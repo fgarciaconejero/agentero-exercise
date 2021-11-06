@@ -96,10 +96,15 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 	}, nil
 }
 
-// TODO: This should retrieve from db, not ams
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
-	// TODO: Add service and respository methods to interfaces, implementation of both service and repository too
-	return &protos.GetContactsAndPoliciesByMobileNumberResponse{}, nil
+	res, err := s.Service.GetContactAndPoliciesByMobileNumberFromSQLite(req.MobileNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protos.GetContactsAndPoliciesByMobileNumberResponse{
+		PolicyHolder: res,
+	}, nil
 }
 
 // Removes every character that is not a number from Mobile Numbers of both Insurance Policies and Policy Holders
