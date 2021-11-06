@@ -37,6 +37,7 @@ func NewServer(service service.IService) *server {
 }
 
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
+	// TODO: Repeated code in this function and ...ByMobileNumber
 	phs, err := s.Service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
