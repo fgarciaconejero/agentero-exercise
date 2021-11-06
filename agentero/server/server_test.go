@@ -25,10 +25,10 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 		PolicyHolders: []*protos.PolicyHolder{
 			{
 				Name:         "John",
-				MobileNumber: "43",
+				MobileNumber: "000000001",
 				InsurancePolicy: []*protos.InsurancePolicy{
 					{
-						MobileNumber: "43",
+						MobileNumber: "000000001",
 						Premium:      500,
 						Type:         "homeowner",
 					},
@@ -52,14 +52,14 @@ var getByMobileNumberTestingParameters = []struct {
 	{
 		// TODO: Something is failing here, when using 42 this should fail as the one below
 		"successful",
-		"42",
+		"000000001",
 		&protos.GetContactsAndPoliciesByMobileNumberResponse{
 			PolicyHolder: &protos.PolicyHolder{
 				Name:         "John",
-				MobileNumber: "43",
+				MobileNumber: "000000001",
 				InsurancePolicy: []*protos.InsurancePolicy{
 					{
-						MobileNumber: "43",
+						MobileNumber: "000000001",
 						Premium:      500,
 						Type:         "homeowner",
 					},
@@ -70,13 +70,13 @@ var getByMobileNumberTestingParameters = []struct {
 	},
 	{
 		"policy holder not found",
-		"42",
+		"000000002",
 		nil,
 		errors.New("policy holder not found"),
 	},
 }
 
-func GetContactsAndPoliciesByMobileNumberTest(t *testing.T) {
+func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	for _, tt := range getByMobileNumberTestingParameters {
 		s := NewServer(&mockService{})
 		req := protos.GetContactsAndPoliciesByMobileNumberRequest{
@@ -84,12 +84,12 @@ func GetContactsAndPoliciesByMobileNumberTest(t *testing.T) {
 		}
 
 		res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
-		if err != tt.err {
-			t.Errorf("Test failure! res: %v, err: %v\n", res, err)
+		if !reflect.DeepEqual(err, tt.err) {
+			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
 		}
 
 		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test failure! res: %v,\n expected: %v\n", res, tt.expected)
+			t.Errorf("Test '%v' failed! res: %v,\n expected: %v\n", tt.name, res, tt.expected)
 		}
 	}
 }
@@ -100,7 +100,7 @@ func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHol
 	return []*protos.PolicyHolder{
 		{
 			Name:         "John",
-			MobileNumber: "43",
+			MobileNumber: "000000001",
 		},
 	}, nil
 }
@@ -108,7 +108,7 @@ func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHol
 func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
 	return []*protos.InsurancePolicy{
 		{
-			MobileNumber: "43",
+			MobileNumber: "000000001",
 			Premium:      500,
 			Type:         "homeowner",
 		},
