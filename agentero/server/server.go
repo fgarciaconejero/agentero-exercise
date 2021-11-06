@@ -29,6 +29,13 @@ func main() {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfuly!")
 
+	agents, err := srv.Service.GetInsuranceAgentsFromAms()
+	if err != nil {
+		log.Fatalf("There was an unexpected error on GetInsuranceAgentsFromAms: %v\n", err)
+	}
+
+	srv.Service.UpsertInsuranceAgentsIntoSQLite(agents)
+
 	agentIds, err := srv.Service.GetAllInsuranceAgentsIds()
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetAllInsuranceAgentsIds: %v\n", err)
