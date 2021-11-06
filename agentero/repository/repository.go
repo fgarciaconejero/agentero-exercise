@@ -248,7 +248,7 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 
 	defer rows.Close()
 	if !rows.Next() {
-		fmt.Println("no policy holders ")
+		fmt.Println("no policy holders found ")
 		return
 	}
 
