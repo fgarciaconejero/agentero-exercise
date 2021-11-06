@@ -126,7 +126,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	defer rows.Close()
 
 	if !rows.Next() {
-		fmt.Println("no insurance policies with mobile number: ", v.MobileNumber)
+		fmt.Println("no insurance policies with mobile number: ", mobileNumber)
 		return
 	}
 
