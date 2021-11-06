@@ -100,6 +100,10 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 
 type mockService struct{}
 
+func (s *mockService) GetAllInsuranceAgentsIds() ([]string, error) {
+	return nil, nil
+}
+
 func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
 	return []*protos.PolicyHolder{
 		{
