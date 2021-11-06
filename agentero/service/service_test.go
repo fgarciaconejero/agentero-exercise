@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/mocks"
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/agentero-exercise/agentero/service"
@@ -93,4 +94,8 @@ func (*mockRepository) UpsertInsurancePolicy(phs *protos.InsurancePolicy) error 
 
 func (r *mockRepository) GetAllInsuranceAgentsIds() ([]string, error) {
 	return []string{}, nil
+}
+
+func (r *mockRepository) UpsertInsuranceAgent(agents *models.Agent) error {
+	return nil
 }
