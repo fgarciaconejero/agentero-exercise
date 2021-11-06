@@ -22,19 +22,19 @@ func NewService(r repository.IRepository) *Service {
 func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
 	resp, err := http.Get("http://localhost:8081/agents/")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error trying to GET '/agents' : ", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error trying to read '/agents' response: ", err)
 	}
 
 	err = json.Unmarshal(body, &agents)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error trying to Unmarshal response from '/agents': ", err)
 	}
 
 	return
