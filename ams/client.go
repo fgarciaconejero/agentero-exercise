@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/agentero-exercise/agentero/resources/mocks"
+	"github.com/agentero-exercise/ams/resources/mocks"
 	"github.com/gin-gonic/gin"
 )
 
