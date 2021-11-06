@@ -50,15 +50,15 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		phs = append(phs, ph)
 	}
 
-	getInsurancePoliciesSQL := `SELECT * FROM insurance_policies WHERE mobile_number = ?`
-	statement, err = r.db.Prepare(getInsurancePoliciesSQL)
+	getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
+	statement, err = r.db.Prepare(getInsurancePoliciesByIdSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
 		return nil, err
 	}
 
 	for i, v := range phs {
-		rows, err = statement.Query(v.MobileNumber)
+		rows, err = statement.Query(agentId)
 		if err != nil {
 			log.Fatalln(err.Error())
 			return nil, err
@@ -81,8 +81,62 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 }
 
 // TODO: Implement this
-func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, error) {
-	return nil, nil
+func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHolder, err error) {
+	// TODO: Duplicated code from here to, at least, the if after the defer. Extract to a new helper function
+	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
+	statement, err := r.db.Prepare(getPolicyHoldersSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+
+	rows, err := statement.Query()
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+
+	defer rows.Close()
+	if !rows.Next() {
+		fmt.Println("no policy holders ")
+		return nil, nil
+	}
+
+	for rows.Next() {
+		phAux := &protos.PolicyHolder{}
+		rows.Scan(phAux.Name, phAux.MobileNumber, nil)
+		if phAux.MobileNumber == mobileNumber {
+			ph = phAux
+			break
+		}
+	}
+
+	getInsurancePoliciesByMobileNumberSQL := `SELECT * FROM insurance_policies WHERE mobile_number = ?`
+	statement, err = r.db.Prepare(getInsurancePoliciesByMobileNumberSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+
+	rows, err = statement.Query(mobileNumber)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		fmt.Println("no insurance policies with mobile number: ", v.MobileNumber)
+		return
+	}
+
+	for rows.Next() {
+		ip := &protos.InsurancePolicy{}
+		rows.Scan(ip.MobileNumber, ip.Premium, ip.Type)
+		ph.InsurancePolicy = append(ph.InsurancePolicy, ip)
+	}
+
+	return
 }
 
 func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
