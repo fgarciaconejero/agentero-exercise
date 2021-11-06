@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
 	}
 
-	err = srv.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs)
+	err = srv.Service.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs)
 	if err != nil {
 		log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
 	}
@@ -80,10 +80,6 @@ func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*prot
 	mapPoliciesToHolders(ips, phs)
 
 	return phs, nil
-}
-
-func (s *server) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite([]*protos.PolicyHolder) error {
-	return nil
 }
 
 // Returns the first policy holder whose mobile number matches the desired one, otherwise it returns an error
