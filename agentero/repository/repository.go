@@ -31,7 +31,7 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 }
 
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
-	insertPolicyHolderSQL := `INSERT INTO policy_holders(name, mobile_number) VALUES (?, ?) ON CONFLICT(mobile_number) DO UPDATE SET name = ?`
+	insertPolicyHolderSQL := `INSERT INTO policy_holders(name, ph_mobile_number) VALUES (?, ?) ON CONFLICT(ph_mobile_number) DO UPDATE SET name = ?`
 
 	statement, err := r.db.Prepare(insertPolicyHolderSQL)
 	if err != nil {
@@ -47,7 +47,7 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 }
 
 func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy) error {
-	insertInsurancePolicySQL := `INSERT INTO insurance_policies(mobile_number, premium, type) VALUES (?, ?, ?) ON CONFLICT(mobile_number) DO UPDATE SET premium = ?, type = ?`
+	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type) VALUES (?, ?, ?) ON CONFLICT(ip_mobile_number) DO UPDATE SET premium = ?, type = ?`
 
 	statement, err := r.db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
@@ -77,23 +77,23 @@ func SetDatabaseUp() (*sql.DB, error) {
 
 	if count == 0 {
 		_, err = db.Exec("CREATE TABLE `policy_holders`" +
-			"(`name` TEXT, `mobile_number` TEXT, PRIMARY KEY (`mobile_number`))")
+			"(`name` TEXT, `ph_mobile_number` TEXT, PRIMARY KEY (`mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `mobile_number_UNIQUE` ON `policy_holders`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `ph_UNIQUE` ON `policy_holders`(`mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
-			"(`mobile_number` TEXT, `premium` integer, `type` TEXT, PRIMARY KEY (`mobile_number`))")
+			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, PRIMARY KEY (`mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `mobile_number_UNIQUE` ON `policy_holders`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `policy_holders`(`mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
