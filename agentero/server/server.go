@@ -30,7 +30,6 @@ func main() {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfuly!")
 
-	// TODO: Update sqlite on start up of server by getting data from AMS
 	// TODO: Retrieve all agentIDs from db to get all from AMS
 	phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms("1")
 	if err != nil {
