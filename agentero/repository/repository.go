@@ -90,7 +90,7 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy) error {
 	return nil
 }
 
-func (r *Repository) UpsertInsuranceAgentsIntoSQLite(agents *models.Agent) error {
+func (r *Repository) UpsertInsuranceAgent(agents *models.Agent) error {
 	return nil
 }
 
