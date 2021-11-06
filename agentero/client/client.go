@@ -18,7 +18,7 @@ func main() {
 	defer conn.Close()
 
 	client := newClient(conn)
-	fmt.Printf("Created client: %f\n\n", client)
+	fmt.Println("Created client successfuly!")
 
 	handleRequests(client)
 }
