@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/agentero-exercise/agentero/resources/protos"
@@ -30,8 +31,30 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 	return nil, nil
 }
 
-func (r *Repository) GetAllInsuranceAgentsIds() (string, error) {
-	return "", nil
+func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
+	getAllInsuranceAgentsSQL := `SELECT * FROM insurance_agents;`
+	statement, err := r.db.Prepare(getAllInsuranceAgentsSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	rows, err := statement.Query()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	defer rows.Close()
+
+	if !rows.Next() {
+		fmt.Println("no rows ")
+	}
+	for rows.Next() {
+		agentId := ""
+		rows.Scan(agentId, nil)
+		result = append(result, agentId)
+	}
+
+	return result, nil
 }
 
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
@@ -98,6 +121,17 @@ func SetDatabaseUp() (*sql.DB, error) {
 		}
 
 		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `policy_holders`(`mobile_number`)")
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = db.Exec("CREATE TABLE `insurance_agents`" +
+			"(`agent_id` TEXT, `name` TEXT, PRIMARY KEY (`agent_id`))")
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = db.Exec("CREATE UNIQUE INDEX `agent_id_UNIQUE` ON `insurance_agents`(`agent_id`)")
 		if err != nil {
 			return nil, err
 		}
