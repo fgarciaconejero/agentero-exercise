@@ -31,6 +31,16 @@ func main() {
 	fmt.Println("Created server successfuly!")
 
 	// TODO: Update sqlite on start up of server by getting data from AMS
+	// TODO: Retrieve all agentIDs from db to get all from AMS
+	phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms("1")
+	if err != nil {
+		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
+	}
+
+	err = srv.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs)
+	if err != nil {
+		log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
+	}
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
@@ -47,56 +57,33 @@ func NewServer(s service.IService) *server {
 
 // TODO: This should retrieve from db, not ams
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
-	phs, ips, err := s.getPolicyHoldersAndInsurancePoliciesFromAms(req.InsuranceAgentId)
-	if err != nil {
-		// Not logging anything since it's already being logged in the function
-		return nil, err
-	}
-
-	filterMobileNumbers(phs, ips)
-	mapPoliciesToHolders(ips, phs)
-
-	// TODO: Save the data in-memory or a database before returning it
-	return &protos.GetContactAndPoliciesByIdResponse{
-		PolicyHolders: phs,
-	}, nil
+	return &protos.GetContactAndPoliciesByIdResponse{}, nil
 }
 
 // TODO: This should retrieve from db, not ams
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
-	phs, ips, err := s.getPolicyHoldersAndInsurancePoliciesFromAms(req.InsuranceAgentId)
+	return &protos.GetContactsAndPoliciesByMobileNumberResponse{}, nil
+}
+
+func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*protos.PolicyHolder, error) {
+	phs, err := s.Service.GetPolicyHoldersFromAms(id)
 	if err != nil {
-		// Not logging anything since it's already being logged in the function
+		return nil, err
+	}
+
+	ips, err := s.Service.GetInsurancePoliciesFromAms(id)
+	if err != nil {
 		return nil, err
 	}
 
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
-	ph, err := filterPolicyHolderByMobileNumber(phs, req.MobileNumber)
-	if err != nil {
-		return nil, err
-	}
-
-	return &protos.GetContactsAndPoliciesByMobileNumberResponse{
-		PolicyHolder: ph,
-	}, nil
+	return phs, nil
 }
 
-func (s *server) getPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*protos.PolicyHolder, []*protos.InsurancePolicy, error) {
-	phs, err := s.Service.GetPolicyHoldersFromAms(id)
-	if err != nil {
-		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
-		return nil, nil, err
-	}
-
-	ips, err := s.Service.GetInsurancePoliciesFromAms(id)
-	if err != nil {
-		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
-		return nil, nil, err
-	}
-
-	return phs, ips, nil
+func (s *server) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite([]*protos.PolicyHolder) error {
+	return nil
 }
 
 // Returns the first policy holder whose mobile number matches the desired one, otherwise it returns an error
