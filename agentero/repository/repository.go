@@ -195,23 +195,23 @@ func SetDatabaseUp() (*sql.DB, error) {
 
 	if count == 0 {
 		_, err = db.Exec("CREATE TABLE `policy_holders`" +
-			"(`name` TEXT, `ph_mobile_number` TEXT, PRIMARY KEY (`mobile_number`))")
+			"(`name` TEXT, `ph_mobile_number` TEXT, PRIMARY KEY (`ph_mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `ph_UNIQUE` ON `policy_holders`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `ph_UNIQUE` ON `policy_holders`(`ph_mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
-			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agentId` TEXT, PRIMARY KEY (`mobile_number`))")
+			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agentId` TEXT, PRIMARY KEY (`ip_mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `insurance_policies`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `insurance_policies`(`ip_mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
