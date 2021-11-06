@@ -43,14 +43,16 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 }
 
 var getByMobileNumberTestingParameters = []struct {
-	name         string
-	mobileNumber string
-	expected     *protos.GetContactsAndPoliciesByMobileNumberResponse
-	err          error
+	name             string
+	mobileNumber     string
+	insuranceAgentId string
+	expected         *protos.GetContactsAndPoliciesByMobileNumberResponse
+	err              error
 }{
 	{
 		"successful",
 		"000000001",
+		"some-agent-id",
 		&protos.GetContactsAndPoliciesByMobileNumberResponse{
 			PolicyHolder: &protos.PolicyHolder{
 				Name:         "John",
@@ -69,6 +71,7 @@ var getByMobileNumberTestingParameters = []struct {
 	{
 		"policy holder not found",
 		"000000002",
+		"some-agent-id",
 		nil,
 		errors.New("policy holder not found"),
 	},
@@ -78,7 +81,8 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	for _, tt := range getByMobileNumberTestingParameters {
 		s := NewServer(&mockService{})
 		req := protos.GetContactsAndPoliciesByMobileNumberRequest{
-			MobileNumber: tt.mobileNumber,
+			MobileNumber:     tt.mobileNumber,
+			InsuranceAgentId: tt.insuranceAgentId,
 		}
 
 		res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)

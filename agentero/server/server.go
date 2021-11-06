@@ -59,12 +59,12 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 
 // TODO: Change the hardcoded agentId for an actual id coming from the request
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
-	phs, err := s.Service.GetPolicyHoldersFromAms("1")
+	phs, err := s.Service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
 	}
 
-	ips, err := s.Service.GetInsurancePoliciesFromAms("1")
+	ips, err := s.Service.GetInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
