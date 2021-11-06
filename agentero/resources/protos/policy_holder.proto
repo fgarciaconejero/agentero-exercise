@@ -13,6 +13,7 @@ message InsurancePolicy {
     string mobile_number = 1;
     int32 premium = 2;
     string type = 3;
+    string agent_id = 4;
 }
 
 message GetContactAndPoliciesByIdRequest {
