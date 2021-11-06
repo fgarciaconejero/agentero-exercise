@@ -77,7 +77,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 
 	if count == 0 {
 		_, err = db.Exec("CREATE TABLE `policy_holders`" +
-			"(`name` string, `mobile_number` string, PRIMARY KEY `mobile_number`)")
+			"(`name` TEXT, `mobile_number` TEXT, PRIMARY KEY (`mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +88,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
-			"(`mobile_number` string, `premium` integer, `type` string, PRIMARY KEY `mobile_number`)")
+			"(`mobile_number` TEXT, `premium` integer, `type` TEXT, PRIMARY KEY (`mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
