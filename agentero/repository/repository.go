@@ -163,21 +163,21 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId s
 	return nil
 }
 
-func (r *Repository) UpsertInsuranceAgent(agent *models.Agent) error {
+func (r *Repository) UpsertInsuranceAgent(agent *models.Agent) (err error) {
 	insertInsuranceAgentSQL := `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
 	statement, err := r.db.Prepare(insertInsuranceAgentSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
-		return err
+		return
 	}
 
 	_, err = statement.Exec(agent.Id, agent.Name, agent.Id)
 	if err != nil {
 		log.Fatalln(err.Error())
-		return err
+		return
 	}
 
-	return nil
+	return
 }
 
 func SetDatabaseUp() (*sql.DB, error) {
@@ -266,7 +266,7 @@ func getInsurancePolicies(filter, mobileNumber string, statement *sql.Stmt) (row
 
 	if !rows.Next() {
 		// TODO: Add 400 response and don't panic
-		fmt.Println("no insurance policies with mobile number: ", mobileNumber)
+		fmt.Println("no insurance policies with mobile number:", mobileNumber)
 		return
 	}
 	return
