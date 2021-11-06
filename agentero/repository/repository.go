@@ -29,7 +29,11 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 	return nil, nil
 }
 
-func (r *Repository) Upsert(phs []*protos.PolicyHolder) error {
+func (r *Repository) UpsertPolicyHolder(phs *protos.PolicyHolder) error {
+	return nil
+}
+
+func (r *Repository) UpsertInsurancePolicy(phs *protos.InsurancePolicy) error {
 	return nil
 }
 

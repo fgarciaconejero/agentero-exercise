@@ -64,5 +64,19 @@ func (*Service) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insurance
 }
 
 func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
-	return s.repository.Upsert(phs)
+	for _, ph := range phs {
+		err := s.repository.UpsertPolicyHolder(ph)
+		if err != nil {
+			return err
+		}
+
+		for _, ip := range ph.InsurancePolicy {
+
+			err = s.repository.UpsertInsurancePolicy(ip)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
