@@ -265,6 +265,7 @@ func getInsurancePolicies(filter, mobileNumber string, statement *sql.Stmt) (row
 	defer rows.Close()
 
 	if !rows.Next() {
+		// TODO: Add 400 response and don't panic
 		fmt.Println("no insurance policies with mobile number: ", mobileNumber)
 		return
 	}
