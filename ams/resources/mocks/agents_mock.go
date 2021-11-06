@@ -7,4 +7,24 @@ var Agents = []models.Agent{
 		Id:   "1",
 		Name: "John Fakelastname",
 	},
+	{
+		Id:   "2",
+		Name: "Mike Fakelastname",
+	},
+	{
+		Id:   "3",
+		Name: "Antony Fakelastname",
+	},
+	{
+		Id:   "4",
+		Name: "Kevin Fakelastname",
+	},
+	{
+		Id:   "4",
+		Name: "Tony Fakelastname",
+	},
+	{
+		Id:   "5",
+		Name: "Alex Fakelastname",
+	},
 }
