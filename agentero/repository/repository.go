@@ -80,7 +80,6 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	return
 }
 
-// TODO: Implement this
 func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHolder, err error) {
 	// TODO: Duplicated code from here to, at least, the if after the defer. Extract to a new helper function
 	getPolicyHoldersSQL := `SELECT * FROM policy_holders`

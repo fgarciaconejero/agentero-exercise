@@ -42,7 +42,6 @@ func main() {
 	}
 
 	for _, id := range agentIds {
-		// TODO: Retrieve all agentIDs from db to get all from AMS
 		phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms(id)
 		if err != nil {
 			log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
