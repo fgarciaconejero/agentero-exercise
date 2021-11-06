@@ -37,6 +37,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		rows.Scan(ph.Name, ph.MobileNumber, nil)
 		phs = append(phs, ph)
 	}
+	fmt.Println("3")
 
 	getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
 	statement, err := r.db.Prepare(getInsurancePoliciesByIdSQL)
@@ -44,6 +45,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		log.Fatalln(err.Error())
 		return nil, err
 	}
+	fmt.Println("4")
 
 	for i, v := range phs {
 		rows, err = getInsurancePolicies(agentId, v.MobileNumber, statement)
@@ -57,6 +59,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 			phs[i].InsurancePolicy = append(phs[i].InsurancePolicy, ip)
 		}
 	}
+	fmt.Println("5")
 
 	return
 }
@@ -146,7 +149,7 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 }
 
 func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId string) error {
-	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agentId) VALUES (?, ?, ?, ?) ON CONFLICT(ip_mobile_number) DO UPDATE SET premium = ?, type = ?, agentId = ?`
+	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agent_id) VALUES (?, ?, ?, ?) ON CONFLICT(ip_mobile_number) DO UPDATE SET premium = ?, type = ?, agent_id = ?`
 
 	statement, err := r.db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
@@ -206,7 +209,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
-			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agentId` TEXT, PRIMARY KEY (`ip_mobile_number`))")
+			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agent_id` TEXT, PRIMARY KEY (`ip_mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
