@@ -79,7 +79,6 @@ func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*prot
 	return phs, nil
 }
 
-// TODO: This should retrieve from db, not ams
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
 	res, err := s.Service.GetPolicyHoldersFromSQLite(req.InsuranceAgentId)
 	if err != nil {
