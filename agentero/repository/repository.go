@@ -24,10 +24,12 @@ func NewRepository() (*Repository, error) {
 	}, nil
 }
 
+// TODO: Implement this
 func (r *Repository) GetById(agentId string) ([]*protos.PolicyHolder, error) {
 	return nil, nil
 }
 
+// TODO: Implement this
 func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, error) {
 	return nil, nil
 }
