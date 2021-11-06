@@ -66,7 +66,6 @@ func main() {
 		if err != nil {
 			log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
 		}
-
 	}
 
 	if err := s.Serve(lis); err != nil {
