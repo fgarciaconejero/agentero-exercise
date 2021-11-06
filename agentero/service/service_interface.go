@@ -11,7 +11,6 @@ type IService interface {
 	GetInsurancePoliciesFromAms(string) ([]*protos.InsurancePolicy, error)
 	GetContactAndPoliciesByIdFromSQLite(string) ([]*protos.PolicyHolder, error)
 	GetContactAndPoliciesByMobileNumberFromSQLite(string) (*protos.PolicyHolder, error)
-	// TODO: GetInsurancePoliciesFromSQLite
 	GetAllInsuranceAgentsIds() ([]string, error)
 	UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite([]*protos.PolicyHolder, string) error
 	UpsertInsuranceAgentsIntoSQLite([]*models.Agent) error
