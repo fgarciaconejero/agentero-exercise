@@ -39,7 +39,6 @@ func SetDatabaseUp() (*sql.DB, error) {
 	}
 
 	// Asking if the tables are already created so that we don't have a duplicate table error
-
 	var count int
 	err = db.QueryRow("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?", "policy_holders", "insurance_policies").Scan(&count)
 	if err != nil {
