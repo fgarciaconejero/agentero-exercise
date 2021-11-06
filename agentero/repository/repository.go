@@ -25,7 +25,7 @@ func (r *Repository) GetById(agentId string) ([]*protos.PolicyHolder, error) {
 	return nil, nil
 }
 
-func (r *Repository) GetByMobileNumber(agentId string) ([]protos.PolicyHolder, error) {
+func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, error) {
 	return nil, nil
 }
 
