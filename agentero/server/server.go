@@ -62,16 +62,6 @@ func NewServer(s service.IService) *server {
 	return &server{Service: s}
 }
 
-// TODO: This should retrieve from db, not ams
-func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
-	return &protos.GetContactAndPoliciesByIdResponse{}, nil
-}
-
-// TODO: This should retrieve from db, not ams
-func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
-	return &protos.GetContactsAndPoliciesByMobileNumberResponse{}, nil
-}
-
 func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*protos.PolicyHolder, error) {
 	phs, err := s.Service.GetPolicyHoldersFromAms(id)
 	if err != nil {
@@ -87,6 +77,16 @@ func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*prot
 	mapPoliciesToHolders(ips, phs)
 
 	return phs, nil
+}
+
+// TODO: This should retrieve from db, not ams
+func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
+	return &protos.GetContactAndPoliciesByIdResponse{}, nil
+}
+
+// TODO: This should retrieve from db, not ams
+func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
+	return &protos.GetContactsAndPoliciesByMobileNumberResponse{}, nil
 }
 
 // Returns the first policy holder whose mobile number matches the desired one, otherwise it returns an error
