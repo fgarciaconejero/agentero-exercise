@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
@@ -18,7 +19,28 @@ func NewService(r repository.IRepository) *Service {
 	return &Service{repository: r}
 }
 
-func (*Service) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
+func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
+	resp, err := http.Get("http://localhost:8081/agents/")
+	if err != nil {
+		log.Fatalln(err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = json.Unmarshal(body, &agents)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return
+}
+
+func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
 	resp, err := http.Get("http://localhost:8081/users/" + agentId)
 	if err != nil {
 		log.Fatalln(err)
@@ -32,16 +54,15 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder,
 		log.Fatalln(err)
 	}
 
-	policyHolders := []*protos.PolicyHolder{}
 	err = json.Unmarshal(body, &policyHolders)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	return policyHolders, nil
+	return
 }
 
-func (*Service) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
+func (*Service) GetInsurancePoliciesFromAms(agentId string) (insurancePolicies []*protos.InsurancePolicy, err error) {
 	resp, err := http.Get("http://localhost:8081/policies/" + agentId)
 	if err != nil {
 		log.Fatalln(err)
@@ -54,13 +75,12 @@ func (*Service) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insurance
 		log.Fatalln(err)
 	}
 
-	insurancePolicies := []*protos.InsurancePolicy{}
 	err = json.Unmarshal(body, &insurancePolicies)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	return insurancePolicies, nil
+	return
 }
 
 func (s *Service) GetAllInsuranceAgentsIds() ([]string, error) {
