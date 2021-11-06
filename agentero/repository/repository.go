@@ -244,6 +244,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 	return db, nil
 }
 
+// Returns the rows retrieved by executing getPolicyHoldersSQL
 func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
 	statement, err := r.db.Prepare(getPolicyHoldersSQL)
