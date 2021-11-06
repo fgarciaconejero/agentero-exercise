@@ -25,8 +25,33 @@ func NewRepository() (*Repository, error) {
 }
 
 // TODO: Implement this
-func (r *Repository) GetById(agentId string) ([]*protos.PolicyHolder, error) {
-	return nil, nil
+func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err error) {
+	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
+	statement, err := r.db.Prepare(getPolicyHoldersSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+
+	rows, err := statement.Query()
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+
+	defer rows.Close()
+	if !rows.Next() {
+		fmt.Println("no policy holders ")
+		return
+	}
+
+	for rows.Next() {
+		ph := &protos.PolicyHolder{}
+		rows.Scan(ph.Name, ph.MobileNumber, nil)
+		phs = append(phs, ph)
+	}
+
+	return
 }
 
 // TODO: Implement this
@@ -35,7 +60,7 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 }
 
 func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
-	getAllInsuranceAgentsSQL := `SELECT * FROM insurance_agents;`
+	getAllInsuranceAgentsSQL := `SELECT * FROM insurance_agents`
 	statement, err := r.db.Prepare(getAllInsuranceAgentsSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -51,7 +76,7 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 	defer rows.Close()
 
 	if !rows.Next() {
-		fmt.Println("no rows ")
+		fmt.Println("no insurance agents ")
 		return result, nil
 	}
 	for rows.Next() {
