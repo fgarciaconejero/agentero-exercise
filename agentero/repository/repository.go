@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/agentero-exercise/agentero/domain/models"
@@ -90,12 +89,18 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 
+	phAux := &protos.PolicyHolder{}
 	for rows.Next() {
 		ip := &protos.InsurancePolicy{}
-		rows.Scan(ip.MobileNumber, ip.Premium, ip.Type)
-		ph.InsurancePolicy = append(ph.InsurancePolicy, ip)
+		err = rows.Scan(&ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
+		if err != nil {
+			return
+		}
+		phAux.InsurancePolicy = append(phAux.InsurancePolicy, ip)
 	}
+	ph = phAux
 
 	return
 }
@@ -247,17 +252,5 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 
 // Returns the insurances policies by a "filter" which can be an id or a mobile number, depending on the need
 func getInsurancePolicies(filter, mobileNumber string, statement *sql.Stmt) (rows *sql.Rows, err error) {
-	rows, err = statement.Query(filter)
-	if err != nil {
-		log.Fatalln(err.Error())
-		return nil, err
-	}
-	defer rows.Close()
-
-	if !rows.Next() {
-		// TODO: Add 400 response and don't panic
-		fmt.Println("no insurance policies with mobile number:", mobileNumber)
-		return
-	}
-	return
+	return statement.Query(filter)
 }
