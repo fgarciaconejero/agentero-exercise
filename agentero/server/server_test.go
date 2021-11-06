@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
@@ -130,4 +131,8 @@ func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insur
 
 func (*mockService) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
 	return nil
+}
+
+func (*mockService) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
+	return
 }
