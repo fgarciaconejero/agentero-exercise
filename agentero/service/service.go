@@ -67,7 +67,7 @@ func (s *Service) GetAllInsuranceAgentsIds() ([]string, error) {
 	return s.repository.GetAllInsuranceAgentsIds()
 }
 
-func (s *Service) GetPolicyHoldersFromSQLite(id string) ([]*protos.PolicyHolder, error) {
+func (s *Service) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.PolicyHolder, error) {
 	return nil, nil
 }
 
