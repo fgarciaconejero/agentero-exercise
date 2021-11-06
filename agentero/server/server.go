@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// TODO: Add logs
 func main() {
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
