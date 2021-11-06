@@ -136,3 +136,7 @@ func (*mockService) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*pro
 func (*mockService) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
 	return
 }
+
+func (*mockService) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) error {
+	return nil
+}
