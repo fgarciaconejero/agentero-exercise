@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/agentero-exercise/agentero/resources/mocks"
+	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/agentero-exercise/agentero/service"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +16,7 @@ import (
 func TestGetPolicyHoldersFromAms(t *testing.T) {
 	initializeAmsMockApi()
 
-	s := &service.Service{}
+	s := service.NewService(&mockRepository{})
 
 	res, err := s.GetPolicyHoldersFromAms("some-agent-id")
 	if err != nil {
@@ -34,7 +35,7 @@ func TestGetPolicyHoldersFromAms(t *testing.T) {
 func GetInsurancePoliciesFromAms(t *testing.T) {
 	initializeAmsMockApi()
 
-	s := &service.Service{}
+	s := service.NewService(&mockRepository{})
 
 	res, err := s.GetInsurancePoliciesFromAms("some-agent-id")
 	if err != nil {
@@ -70,4 +71,18 @@ func initializeAmsMockApi() {
 		time.Sleep(5 * time.Second)
 	}()
 
+}
+
+type mockRepository struct{}
+
+func (*mockRepository) GetById(id string) ([]*protos.PolicyHolder, error) {
+	return nil, nil
+}
+
+func (*mockRepository) GetByMobileNumber(id string) (*protos.PolicyHolder, error) {
+	return nil, nil
+}
+
+func (*mockRepository) Upsert(phs []*protos.PolicyHolder) error {
+	return nil
 }
