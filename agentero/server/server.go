@@ -34,13 +34,19 @@ func main() {
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsuranceAgentsFromAms: %v\n", err)
 	}
+	fmt.Println("Got insurance agents from AMS")
 
-	srv.Service.UpsertInsuranceAgentsIntoSQLite(agents)
+	err = srv.Service.UpsertInsuranceAgentsIntoSQLite(agents)
+	if err != nil {
+		log.Fatalf("There was an unexpected error on UpsertInsuranceAgentsIntoSQLite: %v\n", err)
+	}
+	fmt.Println("Upsert of Insurance Agents successful!")
 
 	agentIds, err := srv.Service.GetAllInsuranceAgentsIds()
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetAllInsuranceAgentsIds: %v\n", err)
 	}
+	fmt.Println("Got insurance agents ids from SQLite")
 
 	for _, id := range agentIds {
 		phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms(id)
