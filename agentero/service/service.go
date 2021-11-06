@@ -62,3 +62,7 @@ func (*Service) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insurance
 
 	return insurancePolicies, nil
 }
+
+func (*Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
+	return nil
+}
