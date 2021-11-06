@@ -40,6 +40,13 @@ func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) 
 	return
 }
 
+func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) error {
+	for _, v := range agents {
+		s.repository.UpsertInsuranceAgent(v)
+	}
+	return nil
+}
+
 func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
 	resp, err := http.Get("http://localhost:8081/users/" + agentId)
 	if err != nil {
