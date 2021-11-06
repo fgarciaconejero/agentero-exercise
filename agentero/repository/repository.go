@@ -114,18 +114,14 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 
 	defer rows.Close()
 
-	if !rows.Next() {
-		fmt.Println("no insurance agents ")
-		return
-	}
 	for rows.Next() {
-		agentId := ""
-		err = rows.Scan(agentId, nil)
+		agent := &models.Agent{}
+		err = rows.Scan(&agent.Id, &agent.Name)
 		if err != nil {
 			log.Fatalln("There was an error scanning insurance agents:", err.Error())
 			return
 		}
-		result = append(result, agentId)
+		result = append(result, agent.Id)
 	}
 
 	return
