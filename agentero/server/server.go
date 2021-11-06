@@ -48,7 +48,7 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
 
-	// Remove every character that is not a number from Mobile Numbers
+	// Removes every character that is not a number from Mobile Numbers
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
@@ -68,7 +68,7 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
 
-	// Remove every character that is not a number from Mobile Numbers
+	// Removes every character that is not a number from Mobile Numbers
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
