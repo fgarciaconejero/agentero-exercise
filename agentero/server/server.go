@@ -48,7 +48,7 @@ func main() {
 			log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
 		}
 
-		err = srv.Service.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs)
+		err = srv.Service.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs, id)
 		if err != nil {
 			log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
 		}

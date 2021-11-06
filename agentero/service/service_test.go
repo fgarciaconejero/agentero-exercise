@@ -88,7 +88,7 @@ func (*mockRepository) UpsertPolicyHolder(phs *protos.PolicyHolder) error {
 	return nil
 }
 
-func (*mockRepository) UpsertInsurancePolicy(phs *protos.InsurancePolicy) error {
+func (*mockRepository) UpsertInsurancePolicy(phs *protos.InsurancePolicy, agentId string) error {
 	return nil
 }
 

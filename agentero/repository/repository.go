@@ -74,15 +74,15 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 	return nil
 }
 
-func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy) error {
-	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type) VALUES (?, ?, ?) ON CONFLICT(ip_mobile_number) DO UPDATE SET premium = ?, type = ?`
+func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId string) error {
+	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agentId) VALUES (?, ?, ?, ?) ON CONFLICT(ip_mobile_number) DO UPDATE SET premium = ?, type = ?, agentId = ?`
 
 	statement, err := r.db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, ip.Premium, ip.Type)
+	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.Premium, ip.Type, agentId)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -91,6 +91,8 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy) error {
 }
 
 func (r *Repository) UpsertInsuranceAgent(agents *models.Agent) error {
+	// insertInsuranceAgentSQL := `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
+
 	return nil
 }
 

@@ -98,7 +98,7 @@ func (s *Service) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.Poli
 	return nil, nil
 }
 
-func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
+func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder, agentId string) error {
 	for _, ph := range phs {
 		err := s.repository.UpsertPolicyHolder(ph)
 		if err != nil {
@@ -107,7 +107,7 @@ func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*proto
 
 		for _, ip := range ph.InsurancePolicy {
 
-			err = s.repository.UpsertInsurancePolicy(ip)
+			err = s.repository.UpsertInsurancePolicy(ip, agentId)
 			if err != nil {
 				return err
 			}

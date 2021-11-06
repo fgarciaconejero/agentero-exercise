@@ -10,6 +10,6 @@ type IRepository interface {
 	GetByMobileNumber(string) (*protos.PolicyHolder, error)
 	GetAllInsuranceAgentsIds() ([]string, error)
 	UpsertPolicyHolder(*protos.PolicyHolder) error
-	UpsertInsurancePolicy(*protos.InsurancePolicy) error
+	UpsertInsurancePolicy(*protos.InsurancePolicy, string) error
 	UpsertInsuranceAgent(*models.Agent) error
 }
