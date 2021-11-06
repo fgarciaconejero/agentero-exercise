@@ -103,28 +103,32 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 	statement, err := r.db.Prepare(getAllInsuranceAgentsSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
-		return nil, err
+		return
 	}
 
 	rows, err := statement.Query()
 	if err != nil {
-		log.Fatalln(err.Error())
-		return nil, err
+		log.Fatalln("There was an error getting insurance agents", err.Error())
+		return
 	}
 
 	defer rows.Close()
 
 	if !rows.Next() {
 		fmt.Println("no insurance agents ")
-		return result, nil
+		return
 	}
 	for rows.Next() {
 		agentId := ""
-		rows.Scan(agentId, nil)
+		err = rows.Scan(agentId, nil)
+		if err != nil {
+			log.Fatalln("There was an error scanning insurance agents:", err.Error())
+			return
+		}
 		result = append(result, agentId)
 	}
 
-	return result, nil
+	return
 }
 
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
