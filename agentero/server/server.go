@@ -37,34 +37,26 @@ func NewServer(service service.IService) *server {
 }
 
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
-	// TODO: Repeated code in this function and ...ByMobileNumber
-	phs, err := s.Service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
+	phs, ips, err := s.getPolicyHoldersAndInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
-		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
-	}
-
-	ips, err := s.Service.GetInsurancePoliciesFromAms(req.InsuranceAgentId)
-	if err != nil {
-		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
+		// Not logging anything since it's already being logged in the function
+		return nil, err
 	}
 
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
+	// TODO: Save the data in-memory or a database before returning it
 	return &protos.GetContactAndPoliciesByIdResponse{
 		PolicyHolders: phs,
 	}, nil
 }
 
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
-	phs, err := s.Service.GetPolicyHoldersFromAms(req.InsuranceAgentId)
+	phs, ips, err := s.getPolicyHoldersAndInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
-		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
-	}
-
-	ips, err := s.Service.GetInsurancePoliciesFromAms(req.InsuranceAgentId)
-	if err != nil {
-		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
+		// Not logging anything since it's already being logged in the function
+		return nil, err
 	}
 
 	filterMobileNumbers(phs, ips)
@@ -78,6 +70,22 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 	return &protos.GetContactsAndPoliciesByMobileNumberResponse{
 		PolicyHolder: ph,
 	}, nil
+}
+
+func (s *server) getPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*protos.PolicyHolder, []*protos.InsurancePolicy, error) {
+	phs, err := s.Service.GetPolicyHoldersFromAms(id)
+	if err != nil {
+		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
+		return nil, nil, err
+	}
+
+	ips, err := s.Service.GetInsurancePoliciesFromAms(id)
+	if err != nil {
+		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
+		return nil, nil, err
+	}
+
+	return phs, ips, nil
 }
 
 // Returns the first policy holder whose mobile number matches the desired one, otherwise it returns an error
