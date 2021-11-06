@@ -48,7 +48,6 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
 
-	// Removes every character that is not a number from Mobile Numbers
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
@@ -68,7 +67,6 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 		log.Fatalf("There was an unexpected error on GetInsurancePoliciesFromAms: %v\n", err)
 	}
 
-	// Removes every character that is not a number from Mobile Numbers
 	filterMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
@@ -82,6 +80,7 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 	}, nil
 }
 
+// Returns the first policy holder whose mobile number matches the desired one, otherwise it returns an error
 func filterPolicyHolderByMobileNumber(phs []*protos.PolicyHolder, mobileNumber string) (*protos.PolicyHolder, error) {
 	for _, v := range phs {
 		if v.MobileNumber == mobileNumber {
@@ -91,6 +90,7 @@ func filterPolicyHolderByMobileNumber(phs []*protos.PolicyHolder, mobileNumber s
 	return nil, errors.New("policy holder not found")
 }
 
+// Removes every character that is not a number from Mobile Numbers of both Insurance Policies and Policy Holders
 func filterMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
 	// This regexp filters everything but numbers out
 	reg, err := regexp.Compile("[^0-9]+")
@@ -104,6 +104,7 @@ func filterMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePoli
 	return reg
 }
 
+// Inserts insurance policies into their rightful policy holders
 func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHolder) {
 	for _, iPolicy := range ips {
 		for _, pHolder := range phs {
@@ -114,12 +115,14 @@ func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHol
 	}
 }
 
+// Removes every character that is not a number from Mobile Numbers of Insurance Policies
 func formatMobileNumbersFromInsurancePolicies(ips []*protos.InsurancePolicy, reg *regexp.Regexp) {
 	for i, v := range ips {
 		ips[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
 	}
 }
 
+// Removes every character that is not a number from Mobile Numbers of Policy Holders
 func formatMobileNumbersFromPolicyHolders(phs []*protos.PolicyHolder, reg *regexp.Regexp) {
 	for i, v := range phs {
 		phs[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
