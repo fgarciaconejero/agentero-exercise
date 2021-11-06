@@ -102,20 +102,19 @@ func (s *Service) GetContactAndPoliciesByMobileNumberFromSQLite(mobileNumber str
 	return s.repository.GetByMobileNumber(mobileNumber)
 }
 
-func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder, agentId string) error {
+func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder, agentId string) (err error) {
 	for _, ph := range phs {
-		err := s.repository.UpsertPolicyHolder(ph)
+		err = s.repository.UpsertPolicyHolder(ph)
 		if err != nil {
-			return err
+			return
 		}
 
 		for _, ip := range ph.InsurancePolicy {
-
 			err = s.repository.UpsertInsurancePolicy(ip, agentId)
 			if err != nil {
-				return err
+				return
 			}
 		}
 	}
-	return nil
+	return
 }
