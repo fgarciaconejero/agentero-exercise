@@ -24,7 +24,6 @@ func NewRepository() (*Repository, error) {
 	}, nil
 }
 
-// TODO: Implement this
 func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err error) {
 	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
 	statement, err := r.db.Prepare(getPolicyHoldersSQL)
@@ -49,6 +48,33 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		ph := &protos.PolicyHolder{}
 		rows.Scan(ph.Name, ph.MobileNumber, nil)
 		phs = append(phs, ph)
+	}
+
+	getInsurancePoliciesSQL := `SELECT * FROM insurance_policies WHERE mobile_number = ?`
+	statement, err = r.db.Prepare(getInsurancePoliciesSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+
+	for i, v := range phs {
+		rows, err = statement.Query(v.MobileNumber)
+		if err != nil {
+			log.Fatalln(err.Error())
+			return nil, err
+		}
+		defer rows.Close()
+
+		if !rows.Next() {
+			fmt.Println("no insurance policies with mobile number: ", v.MobileNumber)
+			return
+		}
+
+		for rows.Next() {
+			ip := &protos.InsurancePolicy{}
+			rows.Scan(ip.MobileNumber, ip.Premium, ip.Type)
+			phs[i].InsurancePolicy = append(phs[i].InsurancePolicy, ip)
+		}
 	}
 
 	return
@@ -149,7 +175,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 
 	// Asking if the tables are already created so that we don't have a duplicate table error
 	var count int
-	err = db.QueryRow("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?", "policy_holders", "insurance_policies").Scan(&count)
+	err = db.QueryRow("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?", "policy_holders", "insurance_policies", "insurance_agents").Scan(&count)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +198,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `policy_holders`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `insurance_policies`(`mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
