@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
@@ -86,6 +87,10 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy) error {
 		log.Fatalln(err.Error())
 	}
 
+	return nil
+}
+
+func (r *Repository) UpsertInsuranceAgentsIntoSQLite(agents *models.Agent) error {
 	return nil
 }
 
