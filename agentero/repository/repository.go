@@ -25,22 +25,9 @@ func NewRepository() (*Repository, error) {
 }
 
 func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err error) {
-	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
-	statement, err := r.db.Prepare(getPolicyHoldersSQL)
+	rows, err := r.getPolicyHolders()
 	if err != nil {
 		log.Fatalln(err.Error())
-		return nil, err
-	}
-
-	rows, err := statement.Query()
-	if err != nil {
-		log.Fatalln(err.Error())
-		return nil, err
-	}
-
-	defer rows.Close()
-	if !rows.Next() {
-		fmt.Println("no policy holders ")
 		return
 	}
 
@@ -51,7 +38,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	}
 
 	getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
-	statement, err = r.db.Prepare(getInsurancePoliciesByIdSQL)
+	statement, err := r.db.Prepare(getInsurancePoliciesByIdSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
 		return nil, err
@@ -81,24 +68,10 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 }
 
 func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHolder, err error) {
-	// TODO: Duplicated code from here to, at least, the if after the defer. Extract to a new helper function
-	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
-	statement, err := r.db.Prepare(getPolicyHoldersSQL)
+	rows, err := r.getPolicyHolders()
 	if err != nil {
 		log.Fatalln(err.Error())
-		return nil, err
-	}
-
-	rows, err := statement.Query()
-	if err != nil {
-		log.Fatalln(err.Error())
-		return nil, err
-	}
-
-	defer rows.Close()
-	if !rows.Next() {
-		fmt.Println("no policy holders ")
-		return nil, nil
+		return
 	}
 
 	for rows.Next() {
@@ -111,7 +84,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	}
 
 	getInsurancePoliciesByMobileNumberSQL := `SELECT * FROM insurance_policies WHERE mobile_number = ?`
-	statement, err = r.db.Prepare(getInsurancePoliciesByMobileNumberSQL)
+	statement, err := r.db.Prepare(getInsurancePoliciesByMobileNumberSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
 		return nil, err
@@ -269,4 +242,27 @@ func SetDatabaseUp() (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
+	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
+	statement, err := r.db.Prepare(getPolicyHoldersSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+
+	rows, err = statement.Query()
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+
+	defer rows.Close()
+	if !rows.Next() {
+		fmt.Println("no policy holders ")
+		return
+	}
+
+	return
 }
