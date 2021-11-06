@@ -23,6 +23,10 @@ func handleRequests() {
 		ctx.JSON(http.StatusOK, mocks.Policies)
 	})
 
+	g.GET("/agents", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, mocks.Agents)
+	})
+
 	if err := g.Run("localhost:8081"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
