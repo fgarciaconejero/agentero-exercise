@@ -113,7 +113,7 @@ func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHol
 	}, nil
 }
 
-func (s *mockService) GetPolicyHoldersFromSQLite(id string) ([]*protos.PolicyHolder, error) {
+func (s *mockService) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.PolicyHolder, error) {
 
 	return nil, nil
 }

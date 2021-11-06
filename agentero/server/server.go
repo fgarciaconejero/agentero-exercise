@@ -80,7 +80,7 @@ func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*prot
 }
 
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
-	res, err := s.Service.GetPolicyHoldersFromSQLite(req.InsuranceAgentId)
+	res, err := s.Service.GetContactAndPoliciesByIdFromSQLite(req.InsuranceAgentId)
 	if err != nil {
 		return nil, err
 	}
