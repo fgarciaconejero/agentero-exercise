@@ -42,7 +42,6 @@ func TestGetContactAndPoliciesById(t *testing.T) {
 	}
 }
 
-// TODO: turn this into parameterized tests
 var getByMobileNumberTestingParameters = []struct {
 	name         string
 	mobileNumber string
@@ -50,7 +49,6 @@ var getByMobileNumberTestingParameters = []struct {
 	err          error
 }{
 	{
-		// TODO: Something is failing here, when using 42 this should fail as the one below
 		"successful",
 		"000000001",
 		&protos.GetContactsAndPoliciesByMobileNumberResponse{
@@ -84,6 +82,8 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 		}
 
 		res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
+		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
+		// in the case of the error being nil there is a nil pointer exception
 		if !reflect.DeepEqual(err, tt.err) {
 			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
 		}
