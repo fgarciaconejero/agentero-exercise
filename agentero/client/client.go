@@ -45,9 +45,10 @@ func handleRequests(client protos.PolicyHoldersServiceClient) {
 		ctx.JSON(http.StatusOK, res.PolicyHolders)
 	})
 
-	g.GET("getByMobileNumber/:mn", func(ctx *gin.Context) {
+	g.GET("getByMobileNumber/:id/:mn", func(ctx *gin.Context) {
 		req := &protos.GetContactsAndPoliciesByMobileNumberRequest{
-			MobileNumber: ctx.Param("mn"),
+			MobileNumber:     ctx.Param("mn"),
+			InsuranceAgentId: ctx.Param("id"),
 		}
 
 		res, err := client.GetContactsAndPoliciesByMobileNumber(ctx, req)
