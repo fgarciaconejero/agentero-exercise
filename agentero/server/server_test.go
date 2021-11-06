@@ -118,3 +118,7 @@ func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insur
 		},
 	}, nil
 }
+
+func (*mockService) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
+	return nil
+}
