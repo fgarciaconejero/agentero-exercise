@@ -90,3 +90,7 @@ func (*mockRepository) UpsertPolicyHolder(phs *protos.PolicyHolder) error {
 func (*mockRepository) UpsertInsurancePolicy(phs *protos.InsurancePolicy) error {
 	return nil
 }
+
+func (r *mockRepository) GetAllInsuranceAgentsIds() (string, error) {
+	return "", nil
+}

@@ -30,6 +30,10 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 	return nil, nil
 }
 
+func (r *Repository) GetAllInsuranceAgentsIds() (string, error) {
+	return "", nil
+}
+
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 	insertPolicyHolderSQL := `INSERT INTO policy_holders(name, ph_mobile_number) VALUES (?, ?) ON CONFLICT(ph_mobile_number) DO UPDATE SET name = ?`
 
