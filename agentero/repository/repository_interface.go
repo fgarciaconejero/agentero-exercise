@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/agentero-exercise/agentero/resources/protos"
+import (
+	"github.com/agentero-exercise/agentero/domain/models"
+	"github.com/agentero-exercise/agentero/resources/protos"
+)
 
 type IRepository interface {
 	GetById(string) ([]*protos.PolicyHolder, error)
@@ -8,4 +11,5 @@ type IRepository interface {
 	GetAllInsuranceAgentsIds() ([]string, error)
 	UpsertPolicyHolder(*protos.PolicyHolder) error
 	UpsertInsurancePolicy(*protos.InsurancePolicy) error
+	UpsertInsuranceAgent(*models.Agent) error
 }
