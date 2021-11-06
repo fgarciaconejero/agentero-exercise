@@ -113,6 +113,11 @@ func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHol
 	}, nil
 }
 
+func (s *mockService) GetPolicyHoldersFromSQLite(id string) ([]*protos.PolicyHolder, error) {
+
+	return nil, nil
+}
+
 func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
 	return []*protos.InsurancePolicy{
 		{
