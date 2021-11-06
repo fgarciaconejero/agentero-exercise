@@ -37,7 +37,6 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		rows.Scan(ph.Name, ph.MobileNumber, nil)
 		phs = append(phs, ph)
 	}
-	fmt.Println("3")
 
 	getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
 	statement, err := r.db.Prepare(getInsurancePoliciesByIdSQL)
@@ -45,7 +44,6 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		log.Fatalln(err.Error())
 		return nil, err
 	}
-	fmt.Println("4")
 
 	for i, v := range phs {
 		rows, err = getInsurancePolicies(agentId, v.MobileNumber, statement)
@@ -59,7 +57,6 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 			phs[i].InsurancePolicy = append(phs[i].InsurancePolicy, ip)
 		}
 	}
-	fmt.Println("5")
 
 	return
 }
@@ -80,7 +77,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		}
 	}
 
-	getInsurancePoliciesByMobileNumberSQL := `SELECT * FROM insurance_policies WHERE mobile_number = ?`
+	getInsurancePoliciesByMobileNumberSQL := `SELECT * FROM insurance_policies WHERE ip_mobile_number = ?`
 	statement, err := r.db.Prepare(getInsurancePoliciesByMobileNumberSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
