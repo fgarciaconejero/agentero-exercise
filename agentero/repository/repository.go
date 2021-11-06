@@ -82,7 +82,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `mobile_number_UNIQUE` ON `users`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `mobile_number_UNIQUE` ON `policy_holders`(`mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
@@ -93,7 +93,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `mobile_number_UNIQUE` ON `users`(`mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `mobile_number_UNIQUE` ON `policy_holders`(`mobile_number`)")
 		if err != nil {
 			return nil, err
 		}
