@@ -30,15 +30,23 @@ func main() {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfuly!")
 
-	// TODO: Retrieve all agentIDs from db to get all from AMS
-	phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms("1")
+	agentIds, err := srv.Service.GetAllInsuranceAgentsIds()
 	if err != nil {
-		log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
+		log.Fatalf("There was an unexpected error on GetAllInsuranceAgentsIds: %v\n", err)
 	}
 
-	err = srv.Service.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs)
-	if err != nil {
-		log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
+	for _, id := range agentIds {
+		// TODO: Retrieve all agentIDs from db to get all from AMS
+		phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms(id)
+		if err != nil {
+			log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
+		}
+
+		err = srv.Service.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs)
+		if err != nil {
+			log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
+		}
+
 	}
 
 	if err := s.Serve(lis); err != nil {
