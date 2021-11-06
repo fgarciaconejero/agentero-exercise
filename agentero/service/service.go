@@ -67,6 +67,10 @@ func (s *Service) GetAllInsuranceAgentsIds() ([]string, error) {
 	return s.repository.GetAllInsuranceAgentsIds()
 }
 
+func (s *Service) GetPolicyHoldersFromSQLite(id string) ([]*protos.PolicyHolder, error) {
+	return nil, nil
+}
+
 func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder) error {
 	for _, ph := range phs {
 		err := s.repository.UpsertPolicyHolder(ph)
