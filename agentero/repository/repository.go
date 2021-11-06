@@ -32,6 +32,7 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 func (r *Repository) Upsert(phs []*protos.PolicyHolder) error {
 	return nil
 }
+
 func SetDatabaseUp() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", "file::memory:?cache=shared")
 	if err != nil {

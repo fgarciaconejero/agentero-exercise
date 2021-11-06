@@ -30,6 +30,8 @@ func main() {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfuly!")
 
+	// TODO: Update sqlite on start up of server by getting data from AMS
+
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 	}
@@ -43,6 +45,7 @@ func NewServer(s service.IService) *server {
 	return &server{Service: s}
 }
 
+// TODO: This should retrieve from db, not ams
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {
 	phs, ips, err := s.getPolicyHoldersAndInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
@@ -59,6 +62,7 @@ func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetC
 	}, nil
 }
 
+// TODO: This should retrieve from db, not ams
 func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *protos.GetContactsAndPoliciesByMobileNumberRequest) (*protos.GetContactsAndPoliciesByMobileNumberResponse, error) {
 	phs, ips, err := s.getPolicyHoldersAndInsurancePoliciesFromAms(req.InsuranceAgentId)
 	if err != nil {
