@@ -67,8 +67,10 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		log.Fatalln(err.Error())
 		return
 	}
+	defer rows.Close()
 
 	for rows.Next() {
+
 		phAux := &protos.PolicyHolder{}
 		rows.Scan(phAux.Name, phAux.MobileNumber, nil)
 		if phAux.MobileNumber == mobileNumber {
@@ -240,19 +242,7 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 		return
 	}
 
-	rows, err = statement.Query()
-	if err != nil {
-		log.Fatalln(err.Error())
-		return
-	}
-
-	defer rows.Close()
-	if !rows.Next() {
-		fmt.Println("no policy holders found ")
-		return
-	}
-
-	return
+	return statement.Query()
 }
 
 // Returns the insurances policies by a "filter" which can be an id or a mobile number, depending on the need
