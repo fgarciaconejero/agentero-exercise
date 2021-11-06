@@ -45,15 +45,8 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	}
 
 	for i, v := range phs {
-		rows, err = statement.Query(agentId)
+		rows, err = getInsurancePolicies(agentId, v.MobileNumber, statement)
 		if err != nil {
-			log.Fatalln(err.Error())
-			return nil, err
-		}
-		defer rows.Close()
-
-		if !rows.Next() {
-			fmt.Println("no insurance policies with mobile number: ", v.MobileNumber)
 			return
 		}
 
@@ -90,15 +83,8 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		return nil, err
 	}
 
-	rows, err = statement.Query(mobileNumber)
+	rows, err = getInsurancePolicies(mobileNumber, mobileNumber, statement)
 	if err != nil {
-		log.Fatalln(err.Error())
-		return nil, err
-	}
-	defer rows.Close()
-
-	if !rows.Next() {
-		fmt.Println("no insurance policies with mobile number: ", mobileNumber)
 		return
 	}
 
@@ -265,5 +251,21 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 		return
 	}
 
+	return
+}
+
+// Returns the insurances policies by a "filter" which can be an id or a mobile number, depending on the need
+func getInsurancePolicies(filter, mobileNumber string, statement *sql.Stmt) (rows *sql.Rows, err error) {
+	rows, err = statement.Query(filter)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		fmt.Println("no insurance policies with mobile number: ", mobileNumber)
+		return
+	}
 	return
 }
