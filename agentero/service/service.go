@@ -95,7 +95,7 @@ func (s *Service) GetAllInsuranceAgentsIds() ([]string, error) {
 }
 
 func (s *Service) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.PolicyHolder, error) {
-	return nil, nil
+	return s.repository.GetById(id)
 }
 
 func (s *Service) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder, agentId string) error {
