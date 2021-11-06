@@ -7,6 +7,7 @@ import (
 
 	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/protos"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Repository struct {
