@@ -40,11 +40,11 @@ func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) 
 	return
 }
 
-func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) error {
+func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) (err error) {
 	for _, v := range agents {
-		s.repository.UpsertInsuranceAgent(v)
+		err = s.repository.UpsertInsuranceAgent(v)
 	}
-	return nil
+	return
 }
 
 func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
