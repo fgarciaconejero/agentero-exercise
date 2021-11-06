@@ -21,15 +21,15 @@ func NewRepository() (*Repository, error) {
 	}, nil
 }
 
-func (*Repository) GetById(agentId string) ([]*protos.PolicyHolder, error) {
+func (r *Repository) GetById(agentId string) ([]*protos.PolicyHolder, error) {
 	return nil, nil
 }
 
-func (*Repository) GetByMobileNumber(agentId string) ([]protos.PolicyHolder, error) {
+func (r *Repository) GetByMobileNumber(agentId string) ([]protos.PolicyHolder, error) {
 	return nil, nil
 }
 
-func (*Repository) Upsert(phs []*protos.PolicyHolder) error {
+func (r *Repository) Upsert(phs []*protos.PolicyHolder) error {
 	return nil
 }
 func SetDatabaseUp() (*sql.DB, error) {
