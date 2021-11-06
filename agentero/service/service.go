@@ -29,7 +29,7 @@ func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) 
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln("Error trying to read '/agents' response: ", err)
+		log.Fatalln("Error trying to read '/agents' response's body: ", err)
 	}
 
 	err = json.Unmarshal(body, &agents)
