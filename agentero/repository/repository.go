@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
@@ -29,11 +30,35 @@ func (r *Repository) GetByMobileNumber(agentId string) (*protos.PolicyHolder, er
 	return nil, nil
 }
 
-func (r *Repository) UpsertPolicyHolder(phs *protos.PolicyHolder) error {
+func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
+	insertPolicyHolderSQL := `INSERT INTO policy_holders(name, mobile_number) VALUES (?, ?) ON CONFLICT(mobile_number) DO UPDATE SET name = ?`
+
+	statement, err := r.db.Prepare(insertPolicyHolderSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	_, err = statement.Exec(ph.Name, ph.MobileNumber, ph.Name)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	return nil
 }
 
-func (r *Repository) UpsertInsurancePolicy(phs *protos.InsurancePolicy) error {
+func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy) error {
+	insertInsurancePolicySQL := `INSERT INTO insurance_policies(mobile_number, premium, type) VALUES (?, ?, ?) ON CONFLICT(mobile_number) DO UPDATE SET premium = ?, type = ?`
+
+	statement, err := r.db.Prepare(insertInsurancePolicySQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, ip.Premium, ip.Type)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	return nil
 }
 
