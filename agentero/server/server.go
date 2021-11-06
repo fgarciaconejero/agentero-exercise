@@ -8,6 +8,7 @@ import (
 	"net"
 	"regexp"
 
+	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/agentero-exercise/agentero/service"
 	"google.golang.org/grpc"
@@ -19,8 +20,14 @@ func main() {
 		log.Fatalf("Failed to listen: %v\n\n", err)
 	}
 
+	r, err := repository.NewRepository()
+	if err != nil {
+		log.Fatalln("There was an error while creating a new server: ", err)
+	}
+	srv := NewServer(service.NewService(r))
 	s := grpc.NewServer()
-	protos.RegisterPolicyHoldersServiceServer(s, NewServer(&service.Service{}))
+
+	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfuly!")
 
 	if err := s.Serve(lis); err != nil {
@@ -32,8 +39,8 @@ type server struct {
 	Service service.IService
 }
 
-func NewServer(service service.IService) *server {
-	return &server{Service: service}
+func NewServer(s service.IService) *server {
+	return &server{Service: s}
 }
 
 func (s *server) GetContactAndPoliciesById(ctx context.Context, req *protos.GetContactAndPoliciesByIdRequest) (*protos.GetContactAndPoliciesByIdResponse, error) {

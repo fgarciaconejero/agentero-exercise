@@ -6,10 +6,17 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
-type Service struct{}
+type Service struct {
+	repository repository.IRepository
+}
+
+func NewService(r repository.IRepository) *Service {
+	return &Service{repository: r}
+}
 
 func (*Service) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
 	resp, err := http.Get("http://localhost:8081/users/" + agentId)
