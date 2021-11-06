@@ -37,17 +37,20 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 	statement, err := r.db.Prepare(getAllInsuranceAgentsSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
+		return nil, err
 	}
 
 	rows, err := statement.Query()
 	if err != nil {
 		log.Fatalln(err.Error())
+		return nil, err
 	}
 
 	defer rows.Close()
 
 	if !rows.Next() {
 		fmt.Println("no rows ")
+		return result, nil
 	}
 	for rows.Next() {
 		agentId := ""
@@ -64,11 +67,13 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 	statement, err := r.db.Prepare(insertPolicyHolderSQL)
 	if err != nil {
 		log.Fatalln(err.Error())
+		return err
 	}
 
 	_, err = statement.Exec(ph.Name, ph.MobileNumber, ph.Name)
 	if err != nil {
 		log.Fatalln(err.Error())
+		return err
 	}
 
 	return nil
@@ -80,18 +85,31 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId s
 	statement, err := r.db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
 		log.Fatalln(err.Error())
+		return err
 	}
 
 	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.Premium, ip.Type, agentId)
 	if err != nil {
 		log.Fatalln(err.Error())
+		return err
 	}
 
 	return nil
 }
 
-func (r *Repository) UpsertInsuranceAgent(agents *models.Agent) error {
-	// insertInsuranceAgentSQL := `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
+func (r *Repository) UpsertInsuranceAgent(agent *models.Agent) error {
+	insertInsuranceAgentSQL := `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
+	statement, err := r.db.Prepare(insertInsuranceAgentSQL)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return err
+	}
+
+	_, err = statement.Exec(agent.Id, agent.Name, agent.Id)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return err
+	}
 
 	return nil
 }
