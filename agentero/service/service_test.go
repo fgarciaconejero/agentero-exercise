@@ -83,6 +83,10 @@ func (*mockRepository) GetByMobileNumber(id string) (*protos.PolicyHolder, error
 	return nil, nil
 }
 
-func (*mockRepository) Upsert(phs []*protos.PolicyHolder) error {
+func (*mockRepository) UpsertPolicyHolder(phs *protos.PolicyHolder) error {
+	return nil
+}
+
+func (*mockRepository) UpsertInsurancePolicy(phs *protos.InsurancePolicy) error {
 	return nil
 }
