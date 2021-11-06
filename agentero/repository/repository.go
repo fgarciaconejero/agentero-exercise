@@ -115,7 +115,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
-			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, PRIMARY KEY (`mobile_number`))")
+			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agentId` TEXT, PRIMARY KEY (`mobile_number`))")
 		if err != nil {
 			return nil, err
 		}
