@@ -15,16 +15,4 @@ var Agents = []models.Agent{
 		Id:   "3",
 		Name: "Antony Fakelastname",
 	},
-	{
-		Id:   "4",
-		Name: "Kevin Fakelastname",
-	},
-	{
-		Id:   "4",
-		Name: "Tony Fakelastname",
-	},
-	{
-		Id:   "5",
-		Name: "Alex Fakelastname",
-	},
 }
