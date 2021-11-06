@@ -38,6 +38,7 @@ func handleRequests(client protos.PolicyHoldersServiceClient) {
 			InsuranceAgentId: ctx.Param("id"),
 		}
 
+		// TODO: make this call a method to bring stuff from sqlite, not ams
 		res, err := client.GetContactAndPoliciesById(ctx, req)
 		if err != nil {
 			log.Fatalf("Something went wrong while trying to get contact and policies by id: %v\n", err)
@@ -51,6 +52,7 @@ func handleRequests(client protos.PolicyHoldersServiceClient) {
 			InsuranceAgentId: ctx.Param("id"),
 		}
 
+		// TODO: make this call a method to bring stuff from sqlite, not ams
 		res, err := client.GetContactsAndPoliciesByMobileNumber(ctx, req)
 		if err != nil {
 			log.Fatalf("Something went wrong while trying to get contact and policies by mobile number: %v\n", err)
