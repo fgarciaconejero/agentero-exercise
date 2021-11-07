@@ -72,15 +72,6 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	return
 }
 
-func filterOutUnmatchedPolicyHolders(phs []*protos.PolicyHolder) (result []*protos.PolicyHolder) {
-	for _, v := range phs {
-		if len(v.InsurancePolicy) != 0 {
-			result = append(result, v)
-		}
-	}
-	return
-}
-
 func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHolder, err error) {
 	rows, err := r.getPolicyHolders()
 	if err != nil {
@@ -273,4 +264,13 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 	}
 
 	return statement.Query()
+}
+
+func filterOutUnmatchedPolicyHolders(phs []*protos.PolicyHolder) (result []*protos.PolicyHolder) {
+	for _, v := range phs {
+		if len(v.InsurancePolicy) != 0 {
+			result = append(result, v)
+		}
+	}
+	return
 }
