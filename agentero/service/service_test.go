@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -14,6 +15,15 @@ import (
 	"github.com/agentero-exercise/agentero/service"
 	"github.com/gin-gonic/gin"
 )
+
+// This function servers as a BeforeEach() / Init() / SetUp() to run before tests and initialize stuff
+// In this case, we need the AmsMockApi to be initialized globally or there will be port conflicts
+func TestMain(m *testing.M) {
+	initializeAmsMockApi()
+	code := m.Run()
+
+	os.Exit(code)
+}
 
 var getPolicyHoldersFromAmsTestingParameters = []struct {
 	name       string
@@ -39,7 +49,6 @@ var getPolicyHoldersFromAmsTestingParameters = []struct {
 }
 
 func TestGetPolicyHoldersFromAms(t *testing.T) {
-	initializeAmsMockApi()
 	for _, tt := range getPolicyHoldersFromAmsTestingParameters {
 		s := service.NewService(&tt.repository)
 		res, err := s.GetPolicyHoldersFromAms(tt.id)
@@ -75,7 +84,6 @@ var getInsurancePoliciesFromAmsTestingParameters = []struct {
 }
 
 func TestGetInsurancePoliciesFromAms(t *testing.T) {
-	initializeAmsMockApi()
 	for _, tt := range getInsurancePoliciesFromAmsTestingParameters {
 		s := service.NewService(&tt.repository)
 		res, err := s.GetInsurancePoliciesFromAms(tt.id)
