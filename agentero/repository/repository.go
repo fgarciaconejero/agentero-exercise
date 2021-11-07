@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/agentero-exercise/agentero/domain/models"
@@ -27,7 +28,7 @@ func NewRepository() (*Repository, error) {
 func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err error) {
 	rows, err := r.getPolicyHolders()
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem while trying to get policy holders from SQLite,", err)
 		return
 	}
 
@@ -35,7 +36,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		ph := &protos.PolicyHolder{}
 		err = rows.Scan(&ph.Name, &ph.MobileNumber)
 		if err != nil {
-			log.Fatalln("There was an error scanning policy holders:", err.Error())
+			fmt.Println("There was an error scanning policy holders:", err.Error())
 			return
 		}
 		phs = append(phs, ph)
@@ -44,7 +45,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
 	statement, err := r.db.Prepare(getInsurancePoliciesByIdSQL)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem preparing the getInsurancePoliciesByIdSQL statement,", err)
 		return nil, err
 	}
 
@@ -59,7 +60,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 			ip := &protos.InsurancePolicy{}
 			err = rows.Scan(&discardId, &ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
 			if err != nil {
-				log.Fatalln("There was an error scanning insurance policies:", err.Error())
+				fmt.Println("There was an error scanning insurance policies:", err.Error())
 				return
 			}
 			if v.MobileNumber == ip.MobileNumber {
@@ -76,7 +77,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHolder, err error) {
 	rows, err := r.getPolicyHolders()
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem while trying to get policy holders from SQLite,", err)
 		return
 	}
 	defer rows.Close()
@@ -85,7 +86,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		phAux := &protos.PolicyHolder{}
 		err = rows.Scan(&phAux.Name, &phAux.MobileNumber)
 		if err != nil {
-			log.Fatalln("There was an error scanning policy holders:", err.Error())
+			fmt.Println("There was an error scanning policy holders:", err.Error())
 			return
 		}
 		if phAux.MobileNumber == mobileNumber {
@@ -97,7 +98,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	getInsurancePoliciesByMobileNumberSQL := `SELECT * FROM insurance_policies WHERE ip_mobile_number = ?`
 	statement, err := r.db.Prepare(getInsurancePoliciesByMobileNumberSQL)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem preparing the getInsurancePoliciesByMobileNumberSQL statement,", err)
 		return nil, err
 	}
 
@@ -112,7 +113,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		ip := &protos.InsurancePolicy{}
 		err = rows.Scan(&discardId, &ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
 		if err != nil {
-			log.Fatalln("There was an error scanning insurance policies:", err.Error())
+			fmt.Println("There was an error scanning insurance policies:", err.Error())
 			return
 		}
 		if mobileNumber == ip.MobileNumber {
@@ -127,13 +128,13 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 	getAllInsuranceAgentsSQL := `SELECT * FROM insurance_agents`
 	statement, err := r.db.Prepare(getAllInsuranceAgentsSQL)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem while trying to get all insurance agents from SQLite,", err)
 		return
 	}
 
 	rows, err := statement.Query()
 	if err != nil {
-		log.Fatalln("There was an error getting insurance agents", err.Error())
+		fmt.Println("There was an error getting insurance agents", err.Error())
 		return
 	}
 
@@ -143,7 +144,7 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 		agent := &models.Agent{}
 		err = rows.Scan(&agent.Id, &agent.Name)
 		if err != nil {
-			log.Fatalln("There was an error scanning insurance agents:", err.Error())
+			fmt.Println("There was an error scanning insurance agents:", err.Error())
 			return
 		}
 		result = append(result, agent.Id)
@@ -154,16 +155,15 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 	insertPolicyHolderSQL := `INSERT INTO policy_holders(name, ph_mobile_number) VALUES (?, ?) ON CONFLICT(ph_mobile_number) DO UPDATE SET name = ?`
-
 	statement, err := r.db.Prepare(insertPolicyHolderSQL)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem while preparing the insertPolicyHolderSQL statement,", err)
 		return err
 	}
 
 	_, err = statement.Exec(ph.Name, ph.MobileNumber, ph.Name)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem executing the insertPolicyHolderSQL statement,", err)
 		return err
 	}
 
@@ -175,13 +175,13 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId s
 
 	statement, err := r.db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem while preparing the insertInsurancePolicySQL statement,", err)
 		return err
 	}
 
 	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.MobileNumber, ip.Premium, ip.Type, agentId)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem executing the insertInsurancePolicySQL statement,", err)
 		return err
 	}
 
@@ -192,13 +192,13 @@ func (r *Repository) UpsertInsuranceAgent(agent *models.Agent) (err error) {
 	insertInsuranceAgentSQL := `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
 	statement, err := r.db.Prepare(insertInsuranceAgentSQL)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem while preparing the insertInsuranceAgentSQL statement,", err)
 		return
 	}
 
 	_, err = statement.Exec(agent.Id, agent.Name, agent.Id)
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println("There was a problem executing the insertInsuranceAgentSQL statement,", err)
 		return
 	}
 
