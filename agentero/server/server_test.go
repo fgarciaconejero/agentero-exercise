@@ -29,6 +29,7 @@ var getFromAmsTestingParameters = []struct {
 						MobileNumber: "000000001",
 						Premium:      500,
 						Type:         "homeowner",
+						AgentId:      "1",
 					},
 				},
 			},
@@ -40,11 +41,13 @@ var getFromAmsTestingParameters = []struct {
 						MobileNumber: "000000002",
 						Premium:      20,
 						Type:         "homeowner",
+						AgentId:      "1",
 					},
 					{
 						MobileNumber: "000000002",
 						Premium:      10,
 						Type:         "homeowner",
+						AgentId:      "1",
 					},
 				},
 			},
@@ -52,6 +55,22 @@ var getFromAmsTestingParameters = []struct {
 		mockService{isError: false},
 		nil,
 	},
+}
+
+func TestGetPolicyHoldersAndInsurancePoliciesFromAms(t *testing.T) {
+	for _, tt := range getFromAmsTestingParameters {
+		s := NewServer(&tt.service)
+
+		res, err := s.GetPolicyHoldersAndInsurancePoliciesFromAms(tt.id)
+		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
+		// in the case of the error being nil there is a nil pointer exception
+		if !reflect.DeepEqual(err, tt.err) {
+			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		}
+		if !reflect.DeepEqual(res, tt.expected) {
+			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
+		}
+	}
 }
 
 var getByIdTestingParameters = []struct {
