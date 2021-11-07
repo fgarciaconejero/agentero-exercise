@@ -82,7 +82,7 @@ func (srv *server) InitAndUpdateServer(s *grpc.Server) error {
 			return err
 		}
 	}
-	fmt.Printf("Updated the information of %v agents", len(agentIds))
+	fmt.Printf("Updated the information of %v agents\n", len(agentIds))
 
 	return nil
 }
