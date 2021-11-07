@@ -10,6 +10,50 @@ import (
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
+var getFromAmsTestingParameters = []struct {
+	name     string
+	id       string
+	expected []*protos.PolicyHolder
+	service  mockService
+	err      error
+}{
+	{
+		"successful",
+		"some-agent-id",
+		[]*protos.PolicyHolder{
+			{
+				Name:         "John",
+				MobileNumber: "000000001",
+				InsurancePolicy: []*protos.InsurancePolicy{
+					{
+						MobileNumber: "000000001",
+						Premium:      500,
+						Type:         "homeowner",
+					},
+				},
+			},
+			{
+				Name:         "Mary",
+				MobileNumber: "000000002",
+				InsurancePolicy: []*protos.InsurancePolicy{
+					{
+						MobileNumber: "000000002",
+						Premium:      20,
+						Type:         "homeowner",
+					},
+					{
+						MobileNumber: "000000002",
+						Premium:      10,
+						Type:         "homeowner",
+					},
+				},
+			},
+		},
+		mockService{isError: false},
+		nil,
+	},
+}
+
 var getByIdTestingParameters = []struct {
 	name     string
 	id       string
@@ -30,6 +74,7 @@ var getByIdTestingParameters = []struct {
 							MobileNumber: "000000001",
 							Premium:      500,
 							Type:         "homeowner",
+							AgentId:      "1",
 						},
 					},
 				},
@@ -41,6 +86,7 @@ var getByIdTestingParameters = []struct {
 							MobileNumber: "000000002",
 							Premium:      500,
 							Type:         "homeowner",
+							AgentId:      "1",
 						},
 					},
 				},
@@ -95,6 +141,7 @@ var getByMobileNumberTestingParameters = []struct {
 						MobileNumber: "000000001",
 						Premium:      500,
 						Type:         "homeowner",
+						AgentId:      "1",
 					},
 				},
 			},
@@ -142,8 +189,14 @@ func (s *mockService) GetAllInsuranceAgentsIds() ([]string, error) {
 func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
 	return []*protos.PolicyHolder{
 		{
-			Name:         "John",
-			MobileNumber: "000000001",
+			Name:            "John",
+			MobileNumber:    "000000001",
+			InsurancePolicy: nil,
+		},
+		{
+			Name:            "Mary",
+			MobileNumber:    "000000002",
+			InsurancePolicy: nil,
 		},
 	}, nil
 }
@@ -161,6 +214,7 @@ func (s *mockService) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.
 					MobileNumber: "000000001",
 					Premium:      500,
 					Type:         "homeowner",
+					AgentId:      "1",
 				},
 			},
 		},
@@ -172,6 +226,7 @@ func (s *mockService) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.
 					MobileNumber: "000000002",
 					Premium:      500,
 					Type:         "homeowner",
+					AgentId:      "1",
 				},
 			},
 		},
@@ -190,6 +245,7 @@ func (s *mockService) GetContactAndPoliciesByMobileNumberFromSQLite(mobileNumber
 				MobileNumber: "000000001",
 				Premium:      500,
 				Type:         "homeowner",
+				AgentId:      "1",
 			},
 		},
 	}, nil
@@ -201,6 +257,19 @@ func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Insur
 			MobileNumber: "000000001",
 			Premium:      500,
 			Type:         "homeowner",
+			AgentId:      "1",
+		},
+		{
+			MobileNumber: "000000002",
+			Premium:      20,
+			Type:         "homeowner",
+			AgentId:      "1",
+		},
+		{
+			MobileNumber: "000000002",
+			Premium:      10,
+			Type:         "homeowner",
+			AgentId:      "1",
 		},
 	}, nil
 }
