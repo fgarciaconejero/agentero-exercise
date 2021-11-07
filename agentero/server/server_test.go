@@ -49,6 +49,13 @@ var getByIdTestingParameters = []struct {
 		mockService{isError: false},
 		nil,
 	},
+	{
+		"policy holder not found",
+		"2",
+		nil,
+		mockService{isError: true},
+		errors.New("policy holder not found"),
+	},
 }
 
 func TestGetContactsAndPoliciesById(t *testing.T) {
