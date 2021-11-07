@@ -26,7 +26,8 @@ message GetContactAndPoliciesByIdResponse {
 
 message GetContactsAndPoliciesByMobileNumberRequest {
     string mobile_number = 1;
-    string insuranceAgentId = 2;
+    reserved "insuranceAgentId";
+    reserved 2;
 }
 
 message GetContactsAndPoliciesByMobileNumberResponse {
