@@ -8,33 +8,7 @@ import (
 
 	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/protos"
-	"google.golang.org/grpc"
 )
-
-var initAndUpdateServerTestingParameters = []struct {
-	name    string
-	service mockService
-	err     error
-}{
-	{
-		"successful",
-		mockService{},
-		nil,
-	},
-}
-
-func TestInitAndUpdateServer(t *testing.T) {
-	for _, tt := range initAndUpdateServerTestingParameters {
-		s := grpc.NewServer()
-		srv := NewServer(&tt.service)
-		err := srv.InitAndUpdateServer(s)
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
-		}
-	}
-}
 
 var getFromAmsTestingParameters = []struct {
 	name     string
@@ -291,6 +265,10 @@ func (s *mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.Ins
 	}, nil
 }
 
+func (s *mockService) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
+	return
+}
+
 func (s *mockService) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.PolicyHolder, error) {
 	if s.isError {
 		return nil, errors.New("policy holder not found")
@@ -343,10 +321,6 @@ func (s *mockService) GetContactAndPoliciesByMobileNumberFromSQLite(mobileNumber
 
 func (*mockService) UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs []*protos.PolicyHolder, agentId string) error {
 	return nil
-}
-
-func (*mockService) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
-	return
 }
 
 func (*mockService) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) error {
