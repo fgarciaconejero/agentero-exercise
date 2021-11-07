@@ -24,15 +24,15 @@ var getPolicyHoldersFromAmsTestingParameters = []struct {
 	isGetUsersByIdError    bool
 	isGetPoliciesByIdError bool
 }{
-	// {
-	// 	"successful",
-	// 	"some-agent-id",
-	// 	mockRepository{},
-	// 	mocks.Users,
-	// 	nil,
-	// 	false,
-	// 	false,
-	// },
+	{
+		"successful",
+		"some-agent-id",
+		mockRepository{},
+		mocks.Users,
+		nil,
+		false,
+		false,
+	},
 	{
 		"isGetUsersByIdError true",
 		"some-agent-id",
