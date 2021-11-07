@@ -33,7 +33,11 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 
 	for rows.Next() {
 		ph := &protos.PolicyHolder{}
-		rows.Scan(ph.Name, ph.MobileNumber, nil)
+		err = rows.Scan(&ph.Name, &ph.MobileNumber)
+		if err != nil {
+			log.Fatalln("There was an error scanning policy holders:", err.Error())
+			return
+		}
 		phs = append(phs, ph)
 	}
 
@@ -52,7 +56,11 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 
 		for rows.Next() {
 			ip := &protos.InsurancePolicy{}
-			rows.Scan(ip.MobileNumber, ip.Premium, ip.Type)
+			err = rows.Scan(ip.MobileNumber, ip.Premium, ip.Type, ip.AgentId)
+			if err != nil {
+				log.Fatalln("There was an error scanning insurance policies:", err.Error())
+				return
+			}
 			phs[i].InsurancePolicy = append(phs[i].InsurancePolicy, ip)
 		}
 	}
@@ -71,7 +79,11 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	for rows.Next() {
 
 		phAux := &protos.PolicyHolder{}
-		rows.Scan(phAux.Name, phAux.MobileNumber, nil)
+		err = rows.Scan(&phAux.Name, &phAux.MobileNumber)
+		if err != nil {
+			log.Fatalln("There was an error scanning policy holders:", err.Error())
+			return
+		}
 		if phAux.MobileNumber == mobileNumber {
 			ph = phAux
 			break
@@ -91,16 +103,18 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	}
 	defer rows.Close()
 
-	phAux := &protos.PolicyHolder{}
+	// phAux := &protos.PolicyHolder{}
 	for rows.Next() {
 		ip := &protos.InsurancePolicy{}
 		err = rows.Scan(&ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
 		if err != nil {
+			log.Fatalln("There was an error scanning insurance policies:", err.Error())
 			return
 		}
-		phAux.InsurancePolicy = append(phAux.InsurancePolicy, ip)
+		ph.InsurancePolicy = append(ph.InsurancePolicy, ip)
+		// phAux.InsurancePolicy = append(phAux.InsurancePolicy, ip)
 	}
-	ph = phAux
+	// ph = phAux
 
 	return
 }
