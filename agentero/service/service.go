@@ -72,7 +72,6 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos
 		fmt.Println("There was en error when trying to unmarshal the response body:", err)
 		return
 	}
-
 	return
 }
 
