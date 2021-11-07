@@ -36,7 +36,7 @@ func main() {
 	s := grpc.NewServer()
 
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
-	fmt.Println("Created server successfuly!")
+	fmt.Println("Created server successfully!")
 
 	agents, err := srv.Service.GetInsuranceAgentsFromAms()
 	if err != nil {
