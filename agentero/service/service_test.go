@@ -77,6 +77,13 @@ var getInsurancePoliciesFromAmsTestingParameters = []struct {
 		mocks.Policies,
 		nil,
 	},
+	{
+		"isGetPoliciesByIdError true",
+		"amsReturnPolicies error",
+		mockRepository{},
+		nil,
+		errors.New("HTTP 400: Bad Request"),
+	},
 }
 
 func TestGetInsurancePoliciesFromAms(t *testing.T) {
@@ -101,7 +108,6 @@ func initializeAmsMockApi() {
 		res, err := amsReturnUsers(ctx.Param("agentId"))
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, nil)
-			return
 		} else {
 			ctx.JSON(http.StatusOK, res)
 		}

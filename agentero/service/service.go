@@ -78,9 +78,13 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos
 func (*Service) GetInsurancePoliciesFromAms(agentId string) (insurancePolicies []*protos.InsurancePolicy, err error) {
 	resp, err := http.Get("http://localhost:8081/policies/" + agentId)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println("There was an unexpected error:", err)
 		return nil, err
+	} else if resp.StatusCode != 200 {
+		fmt.Println("Status code was:", resp.StatusCode)
+		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode) + ": Bad Request")
 	}
+
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
