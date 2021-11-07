@@ -14,43 +14,48 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var getPolicyHoldersFromAmsTestingParameters = []struct {
+	name       string
+	id         string
+	repository mockRepository
+	expected   []*protos.PolicyHolder
+	err        error
+}{}
+
 func TestGetPolicyHoldersFromAms(t *testing.T) {
 	initializeAmsMockApi()
-
-	s := service.NewService(&mockRepository{})
-
-	res, err := s.GetPolicyHoldersFromAms("some-agent-id")
-	if err != nil {
-		t.Errorf("Error failure! res: %v,\n err: %v\n", res, err)
-	}
-
-	expected := mocks.Users
-
-	for i, v := range res {
-		if !reflect.DeepEqual(v, &expected[i]) {
-			t.Errorf("Mismatch failure! res: %v,\n\n\n expected: %v\n", v, &expected[i])
+	for _, tt := range getPolicyHoldersFromAmsTestingParameters {
+		s := service.NewService(&tt.repository)
+		res, err := s.GetPolicyHoldersFromAms(tt.id)
+		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
+		// in the case of the error being nil there is a nil pointer exception
+		if !reflect.DeepEqual(err, tt.err) {
+			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		}
+		if !reflect.DeepEqual(res, tt.expected) {
+			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
 		}
 	}
 }
 
-func GetInsurancePoliciesFromAms(t *testing.T) {
-	initializeAmsMockApi()
+// func TestGetInsurancePoliciesFromAms(t *testing.T) {
+// 	initializeAmsMockApi()
 
-	s := service.NewService(&mockRepository{})
+// 	s := service.NewService(&mockRepository{})
 
-	res, err := s.GetInsurancePoliciesFromAms("some-agent-id")
-	if err != nil {
-		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
-	}
+// 	res, err := s.GetInsurancePoliciesFromAms("some-agent-id")
+// 	if err != nil {
+// 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
+// 	}
 
-	expected := mocks.Policies
+// 	expected := mocks.Policies
 
-	for i, v := range res {
-		if !reflect.DeepEqual(v, &expected[i]) {
-			t.Errorf("Test failure! res: %v, expected: %v\n", res, expected)
-		}
-	}
-}
+// 	for i, v := range res {
+// 		if !reflect.DeepEqual(v, &expected[i]) {
+// 			t.Errorf("Test failure! res: %v, expected: %v\n", res, expected)
+// 		}
+// 	}
+// }
 
 func initializeAmsMockApi() {
 	g := gin.Default()
