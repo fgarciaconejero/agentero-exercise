@@ -39,9 +39,9 @@ var getPolicyHoldersFromAmsTestingParameters = []struct {
 }
 
 func TestGetPolicyHoldersFromAms(t *testing.T) {
-	initializeAmsMockApi()
+	initializeAmsMockApi("localhost:8081") // This url needs to be different in every test, otherwise there is a port conflict
 	for _, tt := range getPolicyHoldersFromAmsTestingParameters {
-		s := service.NewService(&tt.repository)
+		s := service.NewService(&tt.repository, "localhost:8081")
 		res, err := s.GetPolicyHoldersFromAms(tt.id)
 		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
 		// in the case of the error being nil there is a nil pointer exception
@@ -54,7 +54,43 @@ func TestGetPolicyHoldersFromAms(t *testing.T) {
 	}
 }
 
-func initializeAmsMockApi() {
+var getInsurancePoliciesFromAmsTestingParameters = []struct {
+	name       string
+	id         string
+	repository mockRepository
+	expected   []*protos.InsurancePolicy
+	err        error
+}{
+	{
+		"successful",
+		"some-agent-id",
+		mockRepository{},
+		[]*protos.InsurancePolicy{
+			{
+				Type: "something",
+			},
+		},
+		nil,
+	},
+}
+
+func TestGetInsurancePoliciesFromAms(t *testing.T) {
+	initializeAmsMockApi("localhost:8082") // This url needs to be different in every test, otherwise there is a port conflict
+	for _, tt := range getInsurancePoliciesFromAmsTestingParameters {
+		s := service.NewService(&tt.repository, "localhost:8082")
+		res, err := s.GetInsurancePoliciesFromAms(tt.id)
+		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
+		// in the case of the error being nil there is a nil pointer exception
+		if !reflect.DeepEqual(err, tt.err) {
+			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		}
+		if !reflect.DeepEqual(res, tt.expected) {
+			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
+		}
+	}
+}
+
+func initializeAmsMockApi(amsUrl string) {
 	g := gin.Default()
 
 	g.GET("/users/:agentId", func(ctx *gin.Context) {
@@ -77,10 +113,10 @@ func initializeAmsMockApi() {
 	})
 
 	go func() {
-		if err := g.Run("localhost:8081"); err != nil {
+		if err := g.Run(amsUrl); err != nil {
 			log.Fatalf("Failed to run server: %v", err)
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
 	}()
 }
 

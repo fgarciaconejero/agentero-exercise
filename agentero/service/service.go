@@ -15,10 +15,11 @@ import (
 
 type Service struct {
 	repository repository.IRepository
+	amsUrl     string
 }
 
-func NewService(r repository.IRepository) *Service {
-	return &Service{repository: r}
+func NewService(r repository.IRepository, amsUrl string) *Service {
+	return &Service{repository: r, amsUrl: amsUrl}
 }
 
 func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
@@ -49,8 +50,8 @@ func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) (err e
 	return
 }
 
-func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
-	resp, err := http.Get("http://localhost:8081/users/" + agentId)
+func (s *Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
+	resp, err := http.Get(s.amsUrl + "/users/" + agentId)
 	if err != nil {
 		fmt.Println("There was an unexpected error:", err)
 		return nil, err
