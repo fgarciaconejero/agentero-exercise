@@ -2,7 +2,7 @@ package mocks
 
 import "github.com/agentero-exercise/agentero/resources/protos"
 
-var Users = []protos.PolicyHolder{
+var Users = []*protos.PolicyHolder{
 	{
 		Name:         "user1",
 		MobileNumber: "1234567890",
