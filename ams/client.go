@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -56,7 +55,6 @@ func returnPoliciesByAgentId(agentId string) (ips []*protos.InsurancePolicy) {
 
 func returnUsersByAgentId(agentId string) (phs []*protos.PolicyHolder) {
 	reg := compileRegexp()
-	fmt.Println("Here?")
 
 	// This for range is not done in the logical 'for i, v :=...' way because lint throws a warning
 	for _, v := range mocks.Users {
@@ -68,6 +66,5 @@ func returnUsersByAgentId(agentId string) (phs []*protos.PolicyHolder) {
 			}
 		}
 	}
-	fmt.Println("Here!")
 	return
 }
