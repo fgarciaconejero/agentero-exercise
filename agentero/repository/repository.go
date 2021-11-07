@@ -55,8 +55,9 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		}
 
 		for rows.Next() {
+			discardId := ""
 			ip := &protos.InsurancePolicy{}
-			err = rows.Scan(&ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
+			err = rows.Scan(&discardId, &ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
 			if err != nil {
 				log.Fatalln("There was an error scanning insurance policies:", err.Error())
 				return
@@ -107,8 +108,9 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	defer rows.Close()
 
 	for rows.Next() {
+		discardId := ""
 		ip := &protos.InsurancePolicy{}
-		err = rows.Scan(&ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
+		err = rows.Scan(&discardId, &ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
 		if err != nil {
 			log.Fatalln("There was an error scanning insurance policies:", err.Error())
 			return
@@ -169,7 +171,7 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 }
 
 func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId string) error {
-	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agent_id) VALUES (?, ?, ?, ?) ON CONFLICT(ip_mobile_number) DO UPDATE SET premium = ?, type = ?, agent_id = ?`
+	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agent_id) VALUES (?, ?, ?, ?) ON CONFLICT(ip_id) DO UPDATE SET ip_mobile_number = ?, premium = ?, type = ?, agent_id = ?`
 
 	statement, err := r.db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
@@ -177,7 +179,7 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId s
 		return err
 	}
 
-	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.Premium, ip.Type, agentId)
+	_, err = statement.Exec(ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.MobileNumber, ip.Premium, ip.Type, agentId)
 	if err != nil {
 		log.Fatalln(err.Error())
 		return err
@@ -229,12 +231,12 @@ func SetDatabaseUp() (*sql.DB, error) {
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
-			"(`ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agent_id` TEXT, PRIMARY KEY (`ip_mobile_number`))")
+			"(`ip_id` integer, `ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agent_id` TEXT, PRIMARY KEY (`ip_id`))")
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `insurance_policies`(`ip_mobile_number`)")
+		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `insurance_policies`(`ip_id`)")
 		if err != nil {
 			return nil, err
 		}
