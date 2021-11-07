@@ -167,6 +167,7 @@ func initializeAmsMockApi() {
 	}()
 }
 
+// Helper function to give tests the possibility of failure from the AMS endpoints
 func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
 	if isError == "amsReturnUsers error" {
 		return nil, errors.New("HTTP 400: Bad Request")
@@ -174,6 +175,7 @@ func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
 	return mocks.Users, nil
 }
 
+// Helper function to give tests the possibility of failure from the AMS endpoints
 func amsReturnPolicies(isError string) ([]*protos.InsurancePolicy, error) {
 	if isError == "amsReturnPolicies error" {
 		return nil, errors.New("HTTP 400: Bad Request")
