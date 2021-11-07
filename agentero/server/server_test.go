@@ -56,7 +56,7 @@ var getFromAmsTestingParameters = []struct {
 		nil,
 	},
 	{
-		"GetPolicyHoldersFromAmsError returns an error",
+		"GetPolicyHoldersFromAms returns an error",
 		"some-agent-id",
 		nil,
 		mockService{isGetPolicyHoldersFromAmsError: true},
