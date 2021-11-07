@@ -56,7 +56,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 
 		for rows.Next() {
 			ip := &protos.InsurancePolicy{}
-			err = rows.Scan(ip.MobileNumber, ip.Premium, ip.Type, ip.AgentId)
+			err = rows.Scan(&ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
 			if err != nil {
 				log.Fatalln("There was an error scanning insurance policies:", err.Error())
 				return
