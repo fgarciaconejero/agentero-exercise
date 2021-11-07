@@ -15,7 +15,6 @@ import (
 
 type Service struct {
 	repository repository.IRepository
-	amsUrl     string
 }
 
 func NewService(r repository.IRepository) *Service {
