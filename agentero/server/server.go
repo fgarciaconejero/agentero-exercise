@@ -20,7 +20,6 @@ func NewServer(s service.IService) *server {
 	return &server{Service: s}
 }
 
-// TODO: Add logs
 func main() {
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
@@ -66,6 +65,7 @@ func main() {
 			log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
 		}
 	}
+	fmt.Printf("Updated the information of %v agents", len(agentIds))
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
