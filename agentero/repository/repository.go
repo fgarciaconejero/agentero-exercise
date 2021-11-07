@@ -49,7 +49,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	}
 
 	for i, v := range phs {
-		rows, err = getInsurancePolicies(agentId, v.MobileNumber, statement)
+		rows, err = statement.Query(agentId)
 		if err != nil {
 			return
 		}
@@ -61,10 +61,23 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 				log.Fatalln("There was an error scanning insurance policies:", err.Error())
 				return
 			}
-			phs[i].InsurancePolicy = append(phs[i].InsurancePolicy, ip)
+			if v.MobileNumber == ip.MobileNumber {
+				phs[i].InsurancePolicy = append(phs[i].InsurancePolicy, ip)
+			}
 		}
 	}
 
+	phs = filterOutUnmatchedPolicyHolders(phs)
+
+	return
+}
+
+func filterOutUnmatchedPolicyHolders(phs []*protos.PolicyHolder) (result []*protos.PolicyHolder) {
+	for _, v := range phs {
+		if len(v.InsurancePolicy) != 0 {
+			result = append(result, v)
+		}
+	}
 	return
 }
 
@@ -96,7 +109,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		return nil, err
 	}
 
-	rows, err = getInsurancePolicies(mobileNumber, mobileNumber, statement)
+	rows, err = statement.Query(mobileNumber)
 	if err != nil {
 		return
 	}
@@ -109,7 +122,9 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 			log.Fatalln("There was an error scanning insurance policies:", err.Error())
 			return
 		}
-		ph.InsurancePolicy = append(ph.InsurancePolicy, ip)
+		if mobileNumber == ip.MobileNumber {
+			ph.InsurancePolicy = append(ph.InsurancePolicy, ip)
+		}
 	}
 
 	return
@@ -258,9 +273,4 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 	}
 
 	return statement.Query()
-}
-
-// Returns the insurances policies by a "filter" which can be an id or a mobile number, depending on the need
-func getInsurancePolicies(filter, mobileNumber string, statement *sql.Stmt) (rows *sql.Rows, err error) {
-	return statement.Query(filter)
 }
