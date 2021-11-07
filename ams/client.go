@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -50,6 +51,7 @@ func returnPoliciesByAgentId(agentId string) (ips []*protos.InsurancePolicy) {
 			ips = append(ips, &v)
 		}
 	}
+	// fmt.Printf("Agent id: %v has ips: %vn", agentId, ips)
 	return
 }
 
@@ -58,13 +60,15 @@ func returnUsersByAgentId(agentId string) (phs []*protos.PolicyHolder) {
 
 	// This for range is not done in the logical 'for i, v :=...' way because lint throws a warning
 	for _, v := range mocks.Users {
+		v.MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
 		for _, x := range mocks.Policies {
+			x.MobileNumber = reg.ReplaceAllString(x.MobileNumber, "")
 			if (x.MobileNumber == v.MobileNumber) && (x.AgentId == agentId) {
-				v.MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
 				phs = append(phs, &v)
 				break
 			}
 		}
 	}
+	fmt.Printf("Agent id: %v has phs: %v\n", agentId, phs)
 	return
 }
