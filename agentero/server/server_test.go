@@ -10,51 +10,75 @@ import (
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
-// func TestGetContactAndPoliciesById(t *testing.T) {
+var getByIdTestingParameters = []struct {
+	name     string
+	id       string
+	expected *protos.GetContactAndPoliciesByIdResponse
+	service  mockService
+	err      error
+}{
+	{
+		"successful",
+		"1",
+		&protos.GetContactAndPoliciesByIdResponse{
+			PolicyHolders: []*protos.PolicyHolder{
+				{
+					Name:         "John",
+					MobileNumber: "000000001",
+					InsurancePolicy: []*protos.InsurancePolicy{
+						{
+							MobileNumber: "000000001",
+							Premium:      500,
+							Type:         "homeowner",
+						},
+					},
+				},
+				{
+					Name:         "Mary",
+					MobileNumber: "000000002",
+					InsurancePolicy: []*protos.InsurancePolicy{
+						{
+							MobileNumber: "000000002",
+							Premium:      500,
+							Type:         "homeowner",
+						},
+					},
+				},
+			},
+		},
+		mockService{isError: false},
+		nil,
+	},
+}
 
-// 	s := NewServer(&mockService{})
-// 	req := protos.GetContactAndPoliciesByIdRequest{
-// 		InsuranceAgentId: "some-id",
-// 	}
-
-// 	res, err := s.GetContactAndPoliciesById(context.Background(), &req)
-// 	if err != nil {
-// 		t.Errorf("Test failure! res: %v, err: %v\n", res, err)
-// 	}
-
-// 	expected := &protos.GetContactAndPoliciesByIdResponse{
-// 		PolicyHolders: []*protos.PolicyHolder{
-// 			{
-// 				Name:         "John",
-// 				MobileNumber: "000000001",
-// 				InsurancePolicy: []*protos.InsurancePolicy{
-// 					{
-// 						MobileNumber: "000000001",
-// 						Premium:      500,
-// 						Type:         "homeowner",
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}
-
-// 	if !reflect.DeepEqual(res, expected) {
-// 		t.Errorf("Test failure! res: %v,\n expected: %v\n", res, expected)
-// 	}
-// }
+func TestGetContactsAndPoliciesById(t *testing.T) {
+	for _, tt := range getByIdTestingParameters {
+		s := NewServer(&tt.service)
+		req := protos.GetContactAndPoliciesByIdRequest{
+			InsuranceAgentId: tt.id,
+		}
+		res, err := s.GetContactAndPoliciesById(context.Background(), &req)
+		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
+		// in the case of the error being nil there is a nil pointer exception
+		if !reflect.DeepEqual(err, tt.err) {
+			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		}
+		if !reflect.DeepEqual(res, tt.expected) {
+			t.Errorf("Test '%v' failed! res: %v,\n expected: %v\n", tt.name, res, tt.expected)
+		}
+	}
+}
 
 var getByMobileNumberTestingParameters = []struct {
-	name             string
-	mobileNumber     string
-	insuranceAgentId string
-	expected         *protos.GetContactsAndPoliciesByMobileNumberResponse
-	service          mockService
-	err              error
+	name         string
+	mobileNumber string
+	expected     *protos.GetContactsAndPoliciesByMobileNumberResponse
+	service      mockService
+	err          error
 }{
 	{
 		"successful",
 		"000000001",
-		"some-agent-id",
 		&protos.GetContactsAndPoliciesByMobileNumberResponse{
 			PolicyHolder: &protos.PolicyHolder{
 				Name:         "John",
@@ -74,7 +98,6 @@ var getByMobileNumberTestingParameters = []struct {
 	{
 		"policy holder not found",
 		"000000002",
-		"some-agent-id",
 		nil,
 		mockService{isError: true},
 		errors.New("policy holder not found"),
@@ -119,7 +142,33 @@ func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHol
 }
 
 func (s *mockService) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.PolicyHolder, error) {
-	return nil, nil
+	if s.isError {
+		return nil, errors.New("policy holder not found")
+	}
+	return []*protos.PolicyHolder{
+		{
+			Name:         "John",
+			MobileNumber: "000000001",
+			InsurancePolicy: []*protos.InsurancePolicy{
+				{
+					MobileNumber: "000000001",
+					Premium:      500,
+					Type:         "homeowner",
+				},
+			},
+		},
+		{
+			Name:         "Mary",
+			MobileNumber: "000000002",
+			InsurancePolicy: []*protos.InsurancePolicy{
+				{
+					MobileNumber: "000000002",
+					Premium:      500,
+					Type:         "homeowner",
+				},
+			},
+		},
+	}, nil
 }
 
 func (s *mockService) GetContactAndPoliciesByMobileNumberFromSQLite(mobileNumber string) (*protos.PolicyHolder, error) {
