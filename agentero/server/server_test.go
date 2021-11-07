@@ -62,6 +62,13 @@ var getFromAmsTestingParameters = []struct {
 		mockService{isGetPolicyHoldersFromAmsError: true},
 		errors.New("GetPolicyHoldersFromAms returned an error"),
 	},
+	{
+		"GetInsurancePoliciesFromAms returns an error",
+		"some-agent-id",
+		nil,
+		mockService{isGetInsurancePoliciesFromAmsError: true},
+		errors.New("GetInsurancePoliciesFromAms returned an error"),
+	},
 }
 
 func TestGetPolicyHoldersAndInsurancePoliciesFromAms(t *testing.T) {
@@ -232,6 +239,32 @@ func (s *mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyH
 	}, nil
 }
 
+func (s *mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
+	if s.isGetInsurancePoliciesFromAmsError {
+		return nil, errors.New("GetInsurancePoliciesFromAms returned an error")
+	}
+	return []*protos.InsurancePolicy{
+		{
+			MobileNumber: "000000001",
+			Premium:      500,
+			Type:         "homeowner",
+			AgentId:      "1",
+		},
+		{
+			MobileNumber: "000000002",
+			Premium:      20,
+			Type:         "homeowner",
+			AgentId:      "1",
+		},
+		{
+			MobileNumber: "000000002",
+			Premium:      10,
+			Type:         "homeowner",
+			AgentId:      "1",
+		},
+	}, nil
+}
+
 func (s *mockService) GetContactAndPoliciesByIdFromSQLite(id string) ([]*protos.PolicyHolder, error) {
 	if s.isError {
 		return nil, errors.New("policy holder not found")
@@ -278,29 +311,6 @@ func (s *mockService) GetContactAndPoliciesByMobileNumberFromSQLite(mobileNumber
 				Type:         "homeowner",
 				AgentId:      "1",
 			},
-		},
-	}, nil
-}
-
-func (*mockService) GetInsurancePoliciesFromAms(agentId string) ([]*protos.InsurancePolicy, error) {
-	return []*protos.InsurancePolicy{
-		{
-			MobileNumber: "000000001",
-			Premium:      500,
-			Type:         "homeowner",
-			AgentId:      "1",
-		},
-		{
-			MobileNumber: "000000002",
-			Premium:      20,
-			Type:         "homeowner",
-			AgentId:      "1",
-		},
-		{
-			MobileNumber: "000000002",
-			Premium:      10,
-			Type:         "homeowner",
-			AgentId:      "1",
 		},
 	}, nil
 }
