@@ -82,8 +82,7 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 	for _, tt := range getByMobileNumberTestingParameters {
 		s := NewServer(&mockService{})
 		req := protos.GetContactsAndPoliciesByMobileNumberRequest{
-			MobileNumber:     tt.mobileNumber,
-			InsuranceAgentId: tt.insuranceAgentId,
+			MobileNumber: tt.mobileNumber,
 		}
 
 		res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
