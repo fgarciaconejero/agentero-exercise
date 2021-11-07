@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -55,7 +54,5 @@ func returnUsersByAgentId(agentId string) (phs []*protos.PolicyHolder) {
 			}
 		}
 	}
-	fmt.Println("PHS:", phs)
-	fmt.Println("PHS lens:", len(phs))
 	return
 }
