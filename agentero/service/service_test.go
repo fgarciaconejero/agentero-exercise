@@ -93,7 +93,7 @@ func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
 
 func amsReturnPolicies(isError string) ([]protos.InsurancePolicy, error) {
 	if isError == "amsReturnPolicies error" {
-		return nil, errors.New("amsReturnPolicies error")
+		return nil, errors.New("HTTP 400: Bad Request")
 	}
 	return mocks.Policies, nil
 }
