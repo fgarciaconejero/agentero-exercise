@@ -29,28 +29,43 @@ func main() {
 	r, err := repository.NewRepository()
 	if err != nil {
 		log.Fatalln("There was an error while creating a new repository: ", err)
+		return
 	}
 	srv := NewServer(service.NewService(r))
 	s := grpc.NewServer()
 
+	err = srv.InitAndUpdateServer(s)
+	if err != nil {
+		log.Fatalln("There was an error initializing and updating the server:", err)
+	}
+
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v\n", err)
+	}
+}
+
+func (srv *server) InitAndUpdateServer(s *grpc.Server) error {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfully!")
 
 	agents, err := srv.Service.GetInsuranceAgentsFromAms()
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsuranceAgentsFromAms: %v\n", err)
+		return err
 	}
 	fmt.Println("Got insurance agents from AMS")
 
 	err = srv.Service.UpsertInsuranceAgentsIntoSQLite(agents)
 	if err != nil {
 		log.Fatalf("There was an unexpected error on UpsertInsuranceAgentsIntoSQLite: %v\n", err)
+		return err
 	}
 	fmt.Println("Upsert of Insurance Agents successful!")
 
 	agentIds, err := srv.Service.GetAllInsuranceAgentsIds()
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetAllInsuranceAgentsIds: %v\n", err)
+		return err
 	}
 	fmt.Println("Got insurance agents ids from SQLite")
 
@@ -58,18 +73,18 @@ func main() {
 		phs, err := srv.GetPolicyHoldersAndInsurancePoliciesFromAms(id)
 		if err != nil {
 			log.Fatalf("There was an unexpected error on GetPolicyHoldersFromAms: %v\n", err)
+			return err
 		}
 
 		err = srv.Service.UpsertPolicyHoldersAndInsurancePoliciesIntoSQLite(phs, id)
 		if err != nil {
 			log.Fatalf("There was an unexpected error while trying to Upsert to SQLite: %v\n", err)
+			return err
 		}
 	}
 	fmt.Printf("Updated the information of %v agents", len(agentIds))
 
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v\n", err)
-	}
+	return nil
 }
 
 func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*protos.PolicyHolder, error) {
