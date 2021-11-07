@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -50,8 +52,11 @@ func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) (err e
 func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
 	resp, err := http.Get("http://localhost:8081/users/" + agentId)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println("There was an unexpected error:", err)
 		return nil, err
+	} else if resp.StatusCode != 200 {
+		fmt.Println("Status code was:", resp.StatusCode)
+		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode) + ": Bad Request")
 	}
 
 	defer resp.Body.Close()

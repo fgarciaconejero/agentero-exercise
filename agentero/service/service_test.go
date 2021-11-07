@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"reflect"
@@ -15,16 +16,37 @@ import (
 )
 
 var getPolicyHoldersFromAmsTestingParameters = []struct {
-	name       string
-	id         string
-	repository mockRepository
-	expected   []*protos.PolicyHolder
-	err        error
-}{}
+	name                   string
+	id                     string
+	repository             mockRepository
+	expected               []*protos.PolicyHolder
+	err                    error
+	isGetUsersByIdError    bool
+	isGetPoliciesByIdError bool
+}{
+	// {
+	// 	"successful",
+	// 	"some-agent-id",
+	// 	mockRepository{},
+	// 	mocks.Users,
+	// 	nil,
+	// 	false,
+	// 	false,
+	// },
+	{
+		"isGetUsersByIdError true",
+		"some-agent-id",
+		mockRepository{},
+		nil,
+		errors.New("HTTP 400: Bad Request"),
+		true,
+		false,
+	},
+}
 
 func TestGetPolicyHoldersFromAms(t *testing.T) {
-	initializeAmsMockApi()
 	for _, tt := range getPolicyHoldersFromAmsTestingParameters {
+		initializeAmsMockApi(tt.isGetUsersByIdError, tt.isGetPoliciesByIdError)
 		s := service.NewService(&tt.repository)
 		res, err := s.GetPolicyHoldersFromAms(tt.id)
 		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
@@ -57,17 +79,26 @@ func TestGetPolicyHoldersFromAms(t *testing.T) {
 // 	}
 // }
 
-func initializeAmsMockApi() {
+func initializeAmsMockApi(isGetUsersByIdError, isGetPoliciesByIdError bool) {
 	g := gin.Default()
 
 	g.GET("/users/:agentid", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, mocks.Users)
+		res, err := amsReturnUsers(isGetUsersByIdError)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, nil)
+			return
+		} else {
+			ctx.JSON(http.StatusOK, res)
+		}
 	})
 
 	g.GET("/policies/:agentId", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"policy_holder": mocks.Policies,
-		})
+		res, err := amsReturnPolicies(isGetPoliciesByIdError)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, nil)
+		} else {
+			ctx.JSON(http.StatusOK, res)
+		}
 	})
 
 	go func() {
@@ -76,7 +107,20 @@ func initializeAmsMockApi() {
 		}
 		time.Sleep(5 * time.Second)
 	}()
+}
 
+func amsReturnUsers(isError bool) ([]*protos.PolicyHolder, error) {
+	if isError {
+		return nil, errors.New("HTTP 400: Bad Request")
+	}
+	return mocks.Users, nil
+}
+
+func amsReturnPolicies(isError bool) ([]protos.InsurancePolicy, error) {
+	if isError {
+		return nil, errors.New("amsReturnPolicies error")
+	}
+	return mocks.Policies, nil
 }
 
 type mockRepository struct{}
