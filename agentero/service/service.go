@@ -63,12 +63,14 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println("There was en error when trying to read the response body:", err)
+		return
 	}
 
 	err = json.Unmarshal(body, &policyHolders)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println("There was en error when trying to unmarshal the response body:", err)
+		return
 	}
 
 	return
