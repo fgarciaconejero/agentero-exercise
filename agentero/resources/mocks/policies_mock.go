@@ -2,7 +2,7 @@ package mocks
 
 import "github.com/agentero-exercise/agentero/resources/protos"
 
-var Policies = []protos.InsurancePolicy{
+var Policies = []*protos.InsurancePolicy{
 	{
 		MobileNumber: "1234567890",
 		Premium:      2000,

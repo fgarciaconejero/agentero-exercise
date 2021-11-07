@@ -74,11 +74,7 @@ var getInsurancePoliciesFromAmsTestingParameters = []struct {
 		"successful",
 		"some-agent-id",
 		mockRepository{},
-		[]*protos.InsurancePolicy{
-			{
-				Type: "something",
-			},
-		},
+		mocks.Policies,
 		nil,
 	},
 }
@@ -135,7 +131,7 @@ func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
 	return mocks.Users, nil
 }
 
-func amsReturnPolicies(isError string) ([]protos.InsurancePolicy, error) {
+func amsReturnPolicies(isError string) ([]*protos.InsurancePolicy, error) {
 	if isError == "amsReturnPolicies error" {
 		return nil, errors.New("HTTP 400: Bad Request")
 	}
