@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/protos"
@@ -261,7 +260,6 @@ func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
 	statement, err := r.db.Prepare(getPolicyHoldersSQL)
 	if err != nil {
-		log.Fatalln(err.Error())
 		return
 	}
 
