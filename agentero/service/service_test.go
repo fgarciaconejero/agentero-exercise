@@ -132,6 +132,8 @@ func TestGetInsuranceAgentsFromAms(t *testing.T) {
 	}
 }
 
+// Helper function to mock the AMS Mock Api we'll need to make the calls from the service
+// Has slight variations of actual implementation to help testing, but should work pretty much the same
 func initializeAmsMockApi() {
 	g := gin.Default()
 
