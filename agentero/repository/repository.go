@@ -77,7 +77,6 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	defer rows.Close()
 
 	for rows.Next() {
-
 		phAux := &protos.PolicyHolder{}
 		err = rows.Scan(&phAux.Name, &phAux.MobileNumber)
 		if err != nil {
@@ -103,7 +102,6 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	}
 	defer rows.Close()
 
-	// phAux := &protos.PolicyHolder{}
 	for rows.Next() {
 		ip := &protos.InsurancePolicy{}
 		err = rows.Scan(&ip.MobileNumber, &ip.Premium, &ip.Type, &ip.AgentId)
@@ -112,9 +110,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 			return
 		}
 		ph.InsurancePolicy = append(ph.InsurancePolicy, ip)
-		// phAux.InsurancePolicy = append(phAux.InsurancePolicy, ip)
 	}
-	// ph = phAux
 
 	return
 }
