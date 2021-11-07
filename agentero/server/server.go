@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"regexp"
 
 	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/protos"
@@ -84,7 +83,6 @@ func (s *server) GetPolicyHoldersAndInsurancePoliciesFromAms(id string) ([]*prot
 		return nil, err
 	}
 
-	formatMobileNumbers(phs, ips)
 	mapPoliciesToHolders(ips, phs)
 
 	return phs, nil
@@ -112,20 +110,6 @@ func (s *server) GetContactsAndPoliciesByMobileNumber(ctx context.Context, req *
 	}, nil
 }
 
-// Removes every character that is not a number from Mobile Numbers of both Insurance Policies and Policy Holders
-func formatMobileNumbers(phs []*protos.PolicyHolder, ips []*protos.InsurancePolicy) *regexp.Regexp {
-	// This regexp filters everything but numbers out
-	reg, err := regexp.Compile("[^0-9]+")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	formatMobileNumbersFromInsurancePolicies(ips, reg)
-	formatMobileNumbersFromPolicyHolders(phs, reg)
-
-	return reg
-}
-
 // Inserts insurance policies into their rightful policy holders
 func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHolder) {
 	for _, iPolicy := range ips {
@@ -134,19 +118,5 @@ func mapPoliciesToHolders(ips []*protos.InsurancePolicy, phs []*protos.PolicyHol
 				pHolder.InsurancePolicy = append(pHolder.InsurancePolicy, iPolicy)
 			}
 		}
-	}
-}
-
-// Removes every character that is not a number from Mobile Numbers of Insurance Policies
-func formatMobileNumbersFromInsurancePolicies(ips []*protos.InsurancePolicy, reg *regexp.Regexp) {
-	for i, v := range ips {
-		ips[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
-	}
-}
-
-// Removes every character that is not a number from Mobile Numbers of Policy Holders
-func formatMobileNumbersFromPolicyHolders(phs []*protos.PolicyHolder, reg *regexp.Regexp) {
-	for i, v := range phs {
-		phs[i].MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
 	}
 }
