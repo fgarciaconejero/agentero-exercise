@@ -221,33 +221,39 @@ func SetDatabaseUp() (*sql.DB, error) {
 		_, err = db.Exec("CREATE TABLE `policy_holders`" +
 			"(`name` TEXT, `ph_mobile_number` TEXT, PRIMARY KEY (`ph_mobile_number`))")
 		if err != nil {
+			fmt.Println("There was a problem while creating policy_holders table, ", err)
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE UNIQUE INDEX `ph_UNIQUE` ON `policy_holders`(`ph_mobile_number`)")
 		if err != nil {
+			fmt.Println("There was a problem while creating ph_UNIQUE index, ", err)
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_policies`" +
 			"(`ip_id` integer, `ip_mobile_number` TEXT, `premium` integer, `type` TEXT, `agent_id` TEXT, PRIMARY KEY (`ip_id`))")
 		if err != nil {
+			fmt.Println("There was a problem while creating insurance_policies table, ", err)
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE UNIQUE INDEX `ip_UNIQUE` ON `insurance_policies`(`ip_id`)")
 		if err != nil {
+			fmt.Println("There was a problem while creating ip_UNIQUE index, ", err)
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE TABLE `insurance_agents`" +
 			"(`agent_id` TEXT, `name` TEXT, PRIMARY KEY (`agent_id`))")
 		if err != nil {
+			fmt.Println("There was a problem while creating agent_id table, ", err)
 			return nil, err
 		}
 
 		_, err = db.Exec("CREATE UNIQUE INDEX `agent_id_UNIQUE` ON `insurance_agents`(`agent_id`)")
 		if err != nil {
+			fmt.Println("There was a problem while creating agent_id_UNIQUE index, ", err)
 			return nil, err
 		}
 	}
