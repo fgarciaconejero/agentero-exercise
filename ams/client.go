@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -44,11 +43,12 @@ func compileRegexp() (reg *regexp.Regexp) {
 func returnPoliciesByAgentId(agentId string) (ips []*protos.InsurancePolicy) {
 	reg := compileRegexp()
 
-	// This for range is not done in the logical 'for i, v :=...' way because lint throws a warning
-	for _, v := range mocks.Policies {
-		if v.AgentId == agentId {
-			v.MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
-			ips = append(ips, &v)
+	// This for range is not done in the logical 'for i, v :=...' way because the mocks contain a Mux Lock
+	// that not only throws a warning, but messes with the code logic
+	for i := range mocks.Policies {
+		if mocks.Policies[i].AgentId == agentId {
+			mocks.Policies[i].MobileNumber = reg.ReplaceAllString(mocks.Policies[i].MobileNumber, "")
+			ips = append(ips, &mocks.Policies[i])
 		}
 	}
 	// fmt.Printf("Agent id: %v has ips: %vn", agentId, ips)
@@ -58,17 +58,17 @@ func returnPoliciesByAgentId(agentId string) (ips []*protos.InsurancePolicy) {
 func returnUsersByAgentId(agentId string) (phs []*protos.PolicyHolder) {
 	reg := compileRegexp()
 
-	// This for range is not done in the logical 'for i, v :=...' way because lint throws a warning
-	for _, v := range mocks.Users {
-		v.MobileNumber = reg.ReplaceAllString(v.MobileNumber, "")
-		for _, x := range mocks.Policies {
-			x.MobileNumber = reg.ReplaceAllString(x.MobileNumber, "")
-			if (x.MobileNumber == v.MobileNumber) && (x.AgentId == agentId) {
-				phs = append(phs, &v)
+	// This for range is not done in the logical 'for i, v :=...' way because the mocks contain a Mux Lock
+	// that not only throws a warning, but messes with the code logic
+	for i := range mocks.Users {
+		mocks.Users[i].MobileNumber = reg.ReplaceAllString(mocks.Users[i].MobileNumber, "")
+		for x := range mocks.Policies {
+			mocks.Policies[x].MobileNumber = reg.ReplaceAllString(mocks.Policies[x].MobileNumber, "")
+			if (mocks.Policies[x].MobileNumber == mocks.Users[i].MobileNumber) && (mocks.Policies[x].AgentId == agentId) {
+				phs = append(phs, &mocks.Users[i])
 				break
 			}
 		}
 	}
-	fmt.Printf("Agent id: %v has phs: %v\n", agentId, phs)
 	return
 }
