@@ -31,7 +31,7 @@ func main() {
 		log.Fatalln("There was an error while creating a new repository: ", err)
 		return
 	}
-	srv := NewServer(service.NewService(r, "http://localhost:8081"))
+	srv := NewServer(service.NewService(r))
 	s := grpc.NewServer()
 
 	err = srv.InitAndUpdateServer(s)

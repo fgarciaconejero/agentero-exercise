@@ -18,8 +18,8 @@ type Service struct {
 	amsUrl     string
 }
 
-func NewService(r repository.IRepository, amsUrl string) *Service {
-	return &Service{repository: r, amsUrl: amsUrl}
+func NewService(r repository.IRepository) *Service {
+	return &Service{repository: r}
 }
 
 func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
@@ -50,8 +50,8 @@ func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) (err e
 	return
 }
 
-func (s *Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
-	resp, err := http.Get(s.amsUrl + "/users/" + agentId)
+func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
+	resp, err := http.Get("http://localhost:8081/users/" + agentId)
 	if err != nil {
 		fmt.Println("There was an unexpected error:", err)
 		return nil, err

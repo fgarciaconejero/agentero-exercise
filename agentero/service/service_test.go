@@ -39,9 +39,9 @@ var getPolicyHoldersFromAmsTestingParameters = []struct {
 }
 
 func TestGetPolicyHoldersFromAms(t *testing.T) {
-	initializeAmsMockApi("localhost:8081") // This url needs to be different in every test, otherwise there is a port conflict
+	initializeAmsMockApi()
 	for _, tt := range getPolicyHoldersFromAmsTestingParameters {
-		s := service.NewService(&tt.repository, "localhost:8081")
+		s := service.NewService(&tt.repository)
 		res, err := s.GetPolicyHoldersFromAms(tt.id)
 		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
 		// in the case of the error being nil there is a nil pointer exception
@@ -75,9 +75,9 @@ var getInsurancePoliciesFromAmsTestingParameters = []struct {
 }
 
 func TestGetInsurancePoliciesFromAms(t *testing.T) {
-	initializeAmsMockApi("localhost:8082") // This url needs to be different in every test, otherwise there is a port conflict
+	initializeAmsMockApi()
 	for _, tt := range getInsurancePoliciesFromAmsTestingParameters {
-		s := service.NewService(&tt.repository, "localhost:8082")
+		s := service.NewService(&tt.repository)
 		res, err := s.GetInsurancePoliciesFromAms(tt.id)
 		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
 		// in the case of the error being nil there is a nil pointer exception
@@ -90,7 +90,7 @@ func TestGetInsurancePoliciesFromAms(t *testing.T) {
 	}
 }
 
-func initializeAmsMockApi(amsUrl string) {
+func initializeAmsMockApi() {
 	g := gin.Default()
 
 	g.GET("/users/:agentId", func(ctx *gin.Context) {
@@ -113,7 +113,7 @@ func initializeAmsMockApi(amsUrl string) {
 	})
 
 	go func() {
-		if err := g.Run(amsUrl); err != nil {
+		if err := g.Run("localhost:8081"); err != nil {
 			log.Fatalf("Failed to run server: %v", err)
 		}
 		time.Sleep(1 * time.Second)
