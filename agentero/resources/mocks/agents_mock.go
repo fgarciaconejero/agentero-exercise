@@ -2,7 +2,7 @@ package mocks
 
 import "github.com/agentero-exercise/agentero/domain/models"
 
-var Agents = []models.Agent{
+var Agents = []*models.Agent{
 	{
 		Id:   "1",
 		Name: "John Fakelastname",

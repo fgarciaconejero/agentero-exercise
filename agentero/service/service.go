@@ -24,8 +24,11 @@ func NewService(r repository.IRepository) *Service {
 func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
 	resp, err := http.Get("http://localhost:8081/agents/")
 	if err != nil {
-		log.Fatalln("Error trying to GET '/agents' : ", err)
+		fmt.Println("Error trying to GET '/agents' : ", err)
 		return nil, err
+	} else if resp.StatusCode != 200 {
+		fmt.Println("Status code was:", resp.StatusCode)
+		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode) + ": Bad Request")
 	}
 	defer resp.Body.Close()
 
@@ -52,7 +55,7 @@ func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) (err e
 func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
 	resp, err := http.Get("http://localhost:8081/users/" + agentId)
 	if err != nil {
-		fmt.Println("There was an unexpected error:", err)
+		fmt.Println("Error trying to GET '/users/:agentId' : ", err)
 		return nil, err
 	} else if resp.StatusCode != 200 {
 		fmt.Println("Status code was:", resp.StatusCode)
@@ -78,7 +81,7 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos
 func (*Service) GetInsurancePoliciesFromAms(agentId string) (insurancePolicies []*protos.InsurancePolicy, err error) {
 	resp, err := http.Get("http://localhost:8081/policies/" + agentId)
 	if err != nil {
-		fmt.Println("There was an unexpected error:", err)
+		fmt.Println("Error trying to GET '/policies/:agentId' : ", err)
 		return nil, err
 	} else if resp.StatusCode != 200 {
 		fmt.Println("Status code was:", resp.StatusCode)

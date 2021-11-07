@@ -101,8 +101,48 @@ func TestGetInsurancePoliciesFromAms(t *testing.T) {
 	}
 }
 
+var getInsuranceAgentsFromAmsTestingParameters = []struct {
+	name       string
+	id         string
+	repository mockRepository
+	expected   []*models.Agent
+	err        error
+}{
+	{
+		"successful",
+		"some-agent-id",
+		mockRepository{},
+		mocks.Agents,
+		nil,
+	},
+}
+
+func TestGetInsuranceAgentsFromAms(t *testing.T) {
+	for _, tt := range getInsuranceAgentsFromAmsTestingParameters {
+		s := service.NewService(&tt.repository)
+		res, err := s.GetInsuranceAgentsFromAms()
+		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
+		// in the case of the error being nil there is a nil pointer exception
+		if !reflect.DeepEqual(err, tt.err) {
+			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		}
+		if !reflect.DeepEqual(res, tt.expected) {
+			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
+		}
+	}
+}
+
 func initializeAmsMockApi() {
 	g := gin.Default()
+
+	g.GET("/agents", func(ctx *gin.Context) {
+		res, err := amsReturnAgents()
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, nil)
+		} else {
+			ctx.JSON(http.StatusOK, res)
+		}
+	})
 
 	g.GET("/users/:agentId", func(ctx *gin.Context) {
 		res, err := amsReturnUsers(ctx.Param("agentId"))
@@ -128,6 +168,10 @@ func initializeAmsMockApi() {
 		}
 		time.Sleep(1 * time.Second)
 	}()
+}
+
+func amsReturnAgents() ([]*models.Agent, error) {
+	return mocks.Agents, nil
 }
 
 func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
