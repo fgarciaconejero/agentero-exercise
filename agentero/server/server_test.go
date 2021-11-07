@@ -55,6 +55,13 @@ var getFromAmsTestingParameters = []struct {
 		mockService{},
 		nil,
 	},
+	{
+		"GetPolicyHoldersFromAmsError returns an error",
+		"some-agent-id",
+		nil,
+		mockService{isGetPolicyHoldersFromAmsError: true},
+		errors.New("GetPolicyHoldersFromAms returned an error"),
+	},
 }
 
 func TestGetPolicyHoldersAndInsurancePoliciesFromAms(t *testing.T) {
@@ -207,7 +214,10 @@ func (s *mockService) GetAllInsuranceAgentsIds() ([]string, error) {
 	return nil, nil
 }
 
-func (*mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
+func (s *mockService) GetPolicyHoldersFromAms(agentId string) ([]*protos.PolicyHolder, error) {
+	if s.isGetPolicyHoldersFromAmsError {
+		return nil, errors.New("GetPolicyHoldersFromAms returned an error")
+	}
 	return []*protos.PolicyHolder{
 		{
 			Name:            "John",
