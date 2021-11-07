@@ -138,12 +138,7 @@ func initializeAmsMockApi() {
 	g := gin.Default()
 
 	g.GET("/agents", func(ctx *gin.Context) {
-		res, err := amsReturnAgents()
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, nil)
-		} else {
-			ctx.JSON(http.StatusOK, res)
-		}
+		ctx.JSON(http.StatusOK, mocks.Agents)
 	})
 
 	g.GET("/users/:agentId", func(ctx *gin.Context) {
@@ -170,10 +165,6 @@ func initializeAmsMockApi() {
 		}
 		time.Sleep(1 * time.Second)
 	}()
-}
-
-func amsReturnAgents() ([]*models.Agent, error) {
-	return mocks.Agents, nil
 }
 
 func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
