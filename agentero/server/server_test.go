@@ -52,7 +52,7 @@ var getFromAmsTestingParameters = []struct {
 				},
 			},
 		},
-		mockService{isError: false},
+		mockService{},
 		nil,
 	},
 }
@@ -111,7 +111,7 @@ var getByIdTestingParameters = []struct {
 				},
 			},
 		},
-		mockService{isError: false},
+		mockService{},
 		nil,
 	},
 	{
@@ -165,7 +165,7 @@ var getByMobileNumberTestingParameters = []struct {
 				},
 			},
 		},
-		mockService{isError: false},
+		mockService{},
 		nil,
 	},
 	{
@@ -198,7 +198,9 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 }
 
 type mockService struct {
-	isError bool
+	isError                            bool
+	isGetPolicyHoldersFromAmsError     bool
+	isGetInsurancePoliciesFromAmsError bool
 }
 
 func (s *mockService) GetAllInsuranceAgentsIds() ([]string, error) {
