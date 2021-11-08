@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/constants"
 	"github.com/agentero-exercise/agentero/resources/protos"
@@ -291,6 +292,51 @@ func TestUpsertInsurancePolicy(t *testing.T) {
 	for _, tt := range upsertInsurancePolicyTestingParameters {
 		tt.sqlExpectations(mock)
 		err := r.UpsertInsurancePolicy(tt.insurancePolicy, tt.agentId)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
+		}
+	}
+}
+
+var upsertInsuranceAgentTestingParameters = []struct {
+	name            string
+	agent           *models.Agent
+	sqlExpectations func(sqlmock.Sqlmock)
+	err             error
+}{
+	{
+		"successful",
+		&models.Agent{
+			Id:   "1",
+			Name: "John Fakelastname",
+		},
+		func(mock sqlmock.Sqlmock) {
+			result := sqlmock.NewResult(0, 0)
+			mock.ExpectExec(regexp.QuoteMeta(constants.InsertInsuranceAgentSQL)).WillReturnResult(result)
+		},
+		nil,
+	},
+	{
+		"insertInsuranceAgentSQL returns error",
+		&models.Agent{
+			Id:   "1",
+			Name: "John Fakelastname",
+		},
+		func(mock sqlmock.Sqlmock) {
+			mock.ExpectExec(regexp.QuoteMeta(constants.InsertInsuranceAgentSQL)).WillReturnError(errors.New("insertInsuranceAgentSQL returned an error"))
+		},
+		errors.New("insertInsuranceAgentSQL returned an error"),
+	},
+}
+
+func TestUpsertInsuranceAgent(t *testing.T) {
+	db, mock := NewMockDB()
+	r := &repository.Repository{Db: *db}
+	defer r.Db.Close()
+
+	for _, tt := range upsertInsuranceAgentTestingParameters {
+		tt.sqlExpectations(mock)
+		err := r.UpsertInsuranceAgent(tt.agent)
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
