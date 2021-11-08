@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/protos"
@@ -34,17 +35,22 @@ func main() {
 	srv := NewServer(service.NewService(r))
 	s := grpc.NewServer()
 
-	err = srv.InitAndUpdateServer(s)
-	if err != nil {
-		log.Fatalln("There was an error initializing and updating the server:", err)
-	}
+	go func() {
+		for {
+			err = srv.UpdateServer(s)
+			if err != nil {
+				log.Fatalln("There was an error while trying to update the server:", err)
+			}
+			time.Sleep(5 * time.Minute)
+		}
+	}()
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 	}
 }
 
-func (srv *server) InitAndUpdateServer(s *grpc.Server) error {
+func (srv *server) UpdateServer(s *grpc.Server) error {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfully!")
 
