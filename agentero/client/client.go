@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/agentero-exercise/agentero/resources/constants"
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -24,7 +25,7 @@ func main() {
 }
 
 func connectToServer() (*grpc.ClientConn, error) {
-	return grpc.Dial("localhost:50051", grpc.WithInsecure())
+	return grpc.Dial(constants.ServerUrl, grpc.WithInsecure())
 }
 
 func newClient(conn *grpc.ClientConn) protos.PolicyHoldersServiceClient {
@@ -57,7 +58,7 @@ func handleRequests(client protos.PolicyHoldersServiceClient) {
 		ctx.JSON(http.StatusOK, res.PolicyHolder)
 	})
 
-	if err := g.Run("localhost:8080"); err != nil {
+	if err := g.Run(constants.ClientUrl); err != nil {
 		log.Fatalf("Failed to run server: %v\n", err)
 	}
 }

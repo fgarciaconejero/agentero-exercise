@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/agentero-exercise/agentero/resources/protos"
+	"github.com/agentero-exercise/ams/resources/constants"
 	"github.com/agentero-exercise/ams/resources/mocks"
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ func handleRequests() {
 		ctx.JSON(http.StatusOK, mocks.Agents)
 	})
 
-	if err := g.Run("localhost:8081"); err != nil {
+	if err := g.Run(constants.AmsClientUrl); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
 }
