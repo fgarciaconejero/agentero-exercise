@@ -38,15 +38,24 @@ func main() {
 	protos.RegisterPolicyHoldersServiceServer(s, srv)
 	fmt.Println("Created server successfully!")
 
-	go func() {
-		for {
-			err = srv.Import(s)
-			if err != nil {
-				log.Fatalln("There was an error while trying to update the server:", err)
+	err = srv.Import(s)
+	if err != nil {
+		log.Fatalln("There was an error while trying to update the server:", err)
+	}
+
+	if !(*config.SchedulePeriodFlag == 0) {
+		go func() {
+			for {
+				time.Sleep(time.Duration(*config.SchedulePeriodFlag) * time.Minute)
+				err = srv.Import(s)
+				if err != nil {
+					log.Fatalln("There was an error while trying to update the server:", err)
+				}
 			}
-			time.Sleep(time.Duration(*config.SchedulePeriodFlag) * time.Minute)
-		}
-	}()
+		}()
+	} else {
+		fmt.Println("Schedule period flag was 0, thus, the schedule mechanism was disabled")
+	}
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
