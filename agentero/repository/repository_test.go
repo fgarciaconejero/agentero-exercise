@@ -22,18 +22,27 @@ func NewMockDB() (*sql.DB, sqlmock.Sqlmock) {
 }
 
 var getByIdTestingParameters = []struct {
-	name                 string
-	id                   string
-	expectedName         string
-	expectedMobileNumber string
-	expectedResult       []*protos.PolicyHolder
-	err                  error
+	name            string
+	id              string
+	sqlExpectations func(sqlmock.Sqlmock)
+	expectedResult  []*protos.PolicyHolder
+	err             error
 }{
 	{
 		"successful",
 		"some-agent-id",
-		"some-name",
-		"some-mobile-number",
+		func(mock sqlmock.Sqlmock) {
+			getPolicyHoldersSQL := `SELECT * FROM policy_holders`
+			rows := sqlmock.NewRows([]string{"name", "ph_mobile_number"}).AddRow("some-name", "000000001")
+
+			mock.ExpectQuery(regexp.QuoteMeta(getPolicyHoldersSQL)).WillReturnRows(rows)
+
+			getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
+			rows = sqlmock.NewRows([]string{"ip_id", "ip_mobile_number", "premium", "type", "agent_id"}).
+				AddRow("some-ip-id", "000000001", 0, "some-type", "some-agent-id")
+
+			mock.ExpectQuery(regexp.QuoteMeta(getInsurancePoliciesByIdSQL)).WillReturnRows(rows)
+		},
 		[]*protos.PolicyHolder{
 			{
 				Name:         "some-name",
@@ -50,6 +59,12 @@ var getByIdTestingParameters = []struct {
 		},
 		nil,
 	},
+	// {
+	// 	"getPolicyHoldersSQL will return error",
+	// 	"some-agent-id",
+	// 	nil,
+	// 	errors.New("there was a problem while trying to get policy holders"),
+	// },
 }
 
 func TestGetById(t *testing.T) {
@@ -57,17 +72,7 @@ func TestGetById(t *testing.T) {
 	r := &repository.Repository{Db: *db}
 	defer r.Db.Close()
 	for _, tt := range getByIdTestingParameters {
-		getPolicyHoldersSQL := `SELECT * FROM policy_holders`
-		rows := sqlmock.NewRows([]string{"name", "ph_mobile_number"}).AddRow("some-name", "000000001")
-
-		mock.ExpectQuery(regexp.QuoteMeta(getPolicyHoldersSQL)).WillReturnRows(rows)
-
-		getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
-		rows = sqlmock.NewRows([]string{"ip_id", "ip_mobile_number", "premium", "type", "agent_id"}).
-			AddRow("some-ip-id", "000000001", 0, "some-type", "some-agent-id")
-
-		mock.ExpectQuery(regexp.QuoteMeta(getInsurancePoliciesByIdSQL)).WillReturnRows(rows)
-
+		tt.sqlExpectations(mock)
 		res, err := r.GetById(tt.id)
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
