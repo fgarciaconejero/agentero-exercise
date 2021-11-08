@@ -44,7 +44,7 @@ var getPolicyHoldersFromAmsTestingParameters = []struct {
 		"amsReturnUsers error",
 		mockRepository{},
 		nil,
-		errors.New("HTTP 400: Bad Request"),
+		errors.New("HTTP 400"),
 	},
 }
 
@@ -78,7 +78,7 @@ var getInsurancePoliciesFromAmsTestingParameters = []struct {
 		"amsReturnPolicies error",
 		mockRepository{},
 		nil,
-		errors.New("HTTP 400: Bad Request"),
+		errors.New("HTTP 400"),
 	},
 }
 
@@ -158,7 +158,7 @@ func initializeAmsMockApi() {
 // Helper function to give tests the possibility of failure from the AMS endpoints
 func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
 	if isError == "amsReturnUsers error" {
-		return nil, errors.New("HTTP 400: Bad Request")
+		return nil, errors.New("HTTP 400")
 	}
 	return mocks.Users, nil
 }
@@ -166,7 +166,7 @@ func amsReturnUsers(isError string) ([]*protos.PolicyHolder, error) {
 // Helper function to give tests the possibility of failure from the AMS endpoints
 func amsReturnPolicies(isError string) ([]*protos.InsurancePolicy, error) {
 	if isError == "amsReturnPolicies error" {
-		return nil, errors.New("HTTP 400: Bad Request")
+		return nil, errors.New("HTTP 400")
 	}
 	return mocks.Policies, nil
 }

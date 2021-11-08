@@ -29,7 +29,7 @@ func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) 
 		return nil, err
 	} else if resp.StatusCode != 200 {
 		fmt.Println("Status code was:", resp.StatusCode)
-		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode) + ": Bad Request")
+		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode))
 	}
 	defer resp.Body.Close()
 
@@ -60,7 +60,7 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos
 		return nil, err
 	} else if resp.StatusCode != 200 {
 		fmt.Println("Status code was:", resp.StatusCode)
-		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode) + ": Bad Request")
+		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode))
 	}
 
 	defer resp.Body.Close()
@@ -86,7 +86,7 @@ func (*Service) GetInsurancePoliciesFromAms(agentId string) (insurancePolicies [
 		return nil, err
 	} else if resp.StatusCode != 200 {
 		fmt.Println("Status code was:", resp.StatusCode)
-		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode) + ": Bad Request")
+		return nil, errors.New("HTTP " + fmt.Sprint(resp.StatusCode))
 	}
 
 	defer resp.Body.Close()
