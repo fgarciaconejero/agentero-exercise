@@ -10,7 +10,7 @@ import (
 )
 
 type Repository struct {
-	db sql.DB
+	Db sql.DB
 }
 
 func NewRepository() (*Repository, error) {
@@ -20,7 +20,7 @@ func NewRepository() (*Repository, error) {
 	}
 
 	return &Repository{
-		db: *db,
+		Db: *db,
 	}, nil
 }
 
@@ -42,7 +42,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	}
 
 	getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
-	statement, err := r.db.Prepare(getInsurancePoliciesByIdSQL)
+	statement, err := r.Db.Prepare(getInsurancePoliciesByIdSQL)
 	if err != nil {
 		fmt.Println("There was a problem preparing the getInsurancePoliciesByIdSQL statement,", err)
 		return nil, err
@@ -95,7 +95,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 	}
 
 	getInsurancePoliciesByMobileNumberSQL := `SELECT * FROM insurance_policies WHERE ip_mobile_number = ?`
-	statement, err := r.db.Prepare(getInsurancePoliciesByMobileNumberSQL)
+	statement, err := r.Db.Prepare(getInsurancePoliciesByMobileNumberSQL)
 	if err != nil {
 		fmt.Println("There was a problem preparing the getInsurancePoliciesByMobileNumberSQL statement,", err)
 		return nil, err
@@ -125,7 +125,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 
 func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 	getAllInsuranceAgentsSQL := `SELECT * FROM insurance_agents`
-	statement, err := r.db.Prepare(getAllInsuranceAgentsSQL)
+	statement, err := r.Db.Prepare(getAllInsuranceAgentsSQL)
 	if err != nil {
 		fmt.Println("There was a problem while trying to get all insurance agents from SQLite,", err)
 		return
@@ -154,7 +154,7 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 	insertPolicyHolderSQL := `INSERT INTO policy_holders(name, ph_mobile_number) VALUES (?, ?) ON CONFLICT(ph_mobile_number) DO UPDATE SET name = ?`
-	statement, err := r.db.Prepare(insertPolicyHolderSQL)
+	statement, err := r.Db.Prepare(insertPolicyHolderSQL)
 	if err != nil {
 		fmt.Println("There was a problem while preparing the insertPolicyHolderSQL statement,", err)
 		return err
@@ -172,7 +172,7 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) error {
 func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId string) error {
 	insertInsurancePolicySQL := `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agent_id) VALUES (?, ?, ?, ?) ON CONFLICT(ip_id) DO UPDATE SET ip_mobile_number = ?, premium = ?, type = ?, agent_id = ?`
 
-	statement, err := r.db.Prepare(insertInsurancePolicySQL)
+	statement, err := r.Db.Prepare(insertInsurancePolicySQL)
 	if err != nil {
 		fmt.Println("There was a problem while preparing the insertInsurancePolicySQL statement,", err)
 		return err
@@ -189,7 +189,7 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId s
 
 func (r *Repository) UpsertInsuranceAgent(agent *models.Agent) (err error) {
 	insertInsuranceAgentSQL := `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
-	statement, err := r.db.Prepare(insertInsuranceAgentSQL)
+	statement, err := r.Db.Prepare(insertInsuranceAgentSQL)
 	if err != nil {
 		fmt.Println("There was a problem while preparing the insertInsuranceAgentSQL statement,", err)
 		return
@@ -264,7 +264,7 @@ func SetDatabaseUp() (*sql.DB, error) {
 // Returns the rows retrieved by executing getPolicyHoldersSQL
 func (r *Repository) getPolicyHolders() (rows *sql.Rows, err error) {
 	getPolicyHoldersSQL := `SELECT * FROM policy_holders`
-	statement, err := r.db.Prepare(getPolicyHoldersSQL)
+	statement, err := r.Db.Prepare(getPolicyHoldersSQL)
 	if err != nil {
 		return
 	}
