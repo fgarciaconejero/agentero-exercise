@@ -11,7 +11,7 @@ It's recommended to run the AMS client **first** given that the server will retr
 ## Prerequisites
 You must have Go installed and it's advised that the Go extension for VS Code is installed too. The rest of the dependecies should be installed by themselves when running the services for the first time.
 
-1° **If you are in Mac**, please go to the file `./agentero/resources/constants/url.go`, comment the variables that are uncommented and viceversa.
+1° **If you are in Mac**, please go to the file `./agentero/config/config.go`, **comment** the url-related variables that are **uncommented** and then **uncomment** the ones that were previously **commented**
 
 2° - Use the following command to run the Fake AMS API client: `go run .\ams\client.go` (or `go run ./ams/client.go` if you are using MacOS)
 
