@@ -8,9 +8,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/agentero-exercise/agentero/config"
 	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/repository"
-	"github.com/agentero-exercise/agentero/resources/constants"
 	"github.com/agentero-exercise/agentero/resources/protos"
 )
 
@@ -23,7 +23,7 @@ func NewService(r repository.IRepository) *Service {
 }
 
 func (*Service) GetInsuranceAgentsFromAms() (agents []*models.Agent, err error) {
-	resp, err := http.Get(constants.AmsClientUrl + "/agents/")
+	resp, err := http.Get(*config.AmsUrlFlag + "/agents/")
 	if err != nil {
 		fmt.Println("Error trying to GET '/agents' : ", err)
 		return nil, err
@@ -54,7 +54,7 @@ func (s *Service) UpsertInsuranceAgentsIntoSQLite(agents []*models.Agent) (err e
 }
 
 func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos.PolicyHolder, err error) {
-	resp, err := http.Get(constants.AmsClientUrl + "/users/" + agentId)
+	resp, err := http.Get(*config.AmsUrlFlag + "/users/" + agentId)
 	if err != nil {
 		fmt.Println("Error trying to GET '/users/:agentId' : ", err)
 		return nil, err
@@ -80,7 +80,7 @@ func (*Service) GetPolicyHoldersFromAms(agentId string) (policyHolders []*protos
 }
 
 func (*Service) GetInsurancePoliciesFromAms(agentId string) (insurancePolicies []*protos.InsurancePolicy, err error) {
-	resp, err := http.Get(constants.AmsClientUrl + "/policies/" + agentId)
+	resp, err := http.Get(*config.AmsUrlFlag + "/policies/" + agentId)
 	if err != nil {
 		fmt.Println("Error trying to GET '/policies/:agentId' : ", err)
 		return nil, err
