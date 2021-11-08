@@ -34,6 +34,8 @@ func main() {
 	}
 	srv := NewServer(service.NewService(r))
 	s := grpc.NewServer()
+	protos.RegisterPolicyHoldersServiceServer(s, srv)
+	fmt.Println("Created server successfully!")
 
 	go func() {
 		for {
@@ -41,7 +43,7 @@ func main() {
 			if err != nil {
 				log.Fatalln("There was an error while trying to update the server:", err)
 			}
-			time.Sleep(5 * time.Minute)
+			time.Sleep(5 * time.Second)
 		}
 	}()
 
@@ -51,9 +53,6 @@ func main() {
 }
 
 func (srv *server) UpdateServer(s *grpc.Server) error {
-	protos.RegisterPolicyHoldersServiceServer(s, srv)
-	fmt.Println("Created server successfully!")
-
 	agents, err := srv.Service.GetInsuranceAgentsFromAms()
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsuranceAgentsFromAms: %v\n", err)
