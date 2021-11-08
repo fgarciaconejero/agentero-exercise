@@ -8,7 +8,7 @@ var (
 	ServerUrlFlag = flag.String("server-url", "localhost:50051", "Client's url")
 
 	// Mac flag
-	// 	AmsUrlFlag    = flag.String("ams-api-url", "127.0.0.1:8081", "Fake AMS API's url for Mac")
+	// 	AmsUrlFlag    = flag.String("ams-api-url", "http://127.0.0.1:8081", "Fake AMS API's url for Mac")
 	// 	ClientUrlFlag = flag.String("client-url", "127.0.0.1:8080", "Client's url for Mac")
 	// 	ServerUrlFlag = flag.String("server-url", "127.0.0.1:50051", "Client's url for Mac")
 
