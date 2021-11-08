@@ -8,6 +8,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/agentero-exercise/agentero/repository"
+	"github.com/agentero-exercise/agentero/resources/constants"
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/stretchr/testify/assert"
 )
@@ -32,10 +33,9 @@ var getByIdTestingParameters = []struct {
 		"successful",
 		"some-agent-id",
 		func(mock sqlmock.Sqlmock) {
-			getPolicyHoldersSQL := `SELECT * FROM policy_holders`
 			rows := sqlmock.NewRows([]string{"name", "ph_mobile_number"}).AddRow("some-name", "000000001")
 
-			mock.ExpectQuery(regexp.QuoteMeta(getPolicyHoldersSQL)).WillReturnRows(rows)
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetPolicyHoldersSQL)).WillReturnRows(rows)
 
 			getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
 			rows = sqlmock.NewRows([]string{"ip_id", "ip_mobile_number", "premium", "type", "agent_id"}).
@@ -62,6 +62,9 @@ var getByIdTestingParameters = []struct {
 	// {
 	// 	"getPolicyHoldersSQL will return error",
 	// 	"some-agent-id",
+	// 	func(mock sqlmock.Sqlmock) {
+
+	// 	},
 	// 	nil,
 	// 	errors.New("there was a problem while trying to get policy holders"),
 	// },
