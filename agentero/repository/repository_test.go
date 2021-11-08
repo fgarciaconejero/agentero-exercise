@@ -246,3 +246,53 @@ func TestUpsertPolicyHolder(t *testing.T) {
 		}
 	}
 }
+
+var upsertInsurancePolicyTestingParameters = []struct {
+	name            string
+	agentId         string
+	insurancePolicy *protos.InsurancePolicy
+	sqlExpectations func(sqlmock.Sqlmock)
+	err             error
+}{
+	{
+		"success",
+		"some-agent-id",
+		&protos.InsurancePolicy{
+			MobileNumber: "000000001",
+			Premium:      0,
+			Type:         "some-type",
+		},
+		func(mock sqlmock.Sqlmock) {
+			result := sqlmock.NewResult(0, 0)
+			mock.ExpectExec(regexp.QuoteMeta(constants.InsertInsurancePolicySQL)).WillReturnResult(result)
+		},
+		nil,
+	},
+	{
+		"insertPolicyHolderSQL returns error",
+		"some-agent-id",
+		&protos.InsurancePolicy{
+			MobileNumber: "000000001",
+			Premium:      0,
+			Type:         "some-type",
+		},
+		func(mock sqlmock.Sqlmock) {
+			mock.ExpectExec(regexp.QuoteMeta(constants.InsertInsurancePolicySQL)).WillReturnError(errors.New("insertInsurancePolicySQL returned an error"))
+		},
+		errors.New("insertInsurancePolicySQL returned an error"),
+	},
+}
+
+func TestUpsertInsurancePolicy(t *testing.T) {
+	db, mock := NewMockDB()
+	r := &repository.Repository{Db: *db}
+	defer r.Db.Close()
+
+	for _, tt := range upsertInsurancePolicyTestingParameters {
+		tt.sqlExpectations(mock)
+		err := r.UpsertInsurancePolicy(tt.insurancePolicy, tt.agentId)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
+		}
+	}
+}
