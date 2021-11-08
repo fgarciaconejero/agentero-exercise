@@ -39,7 +39,7 @@ func main() {
 
 	go func() {
 		for {
-			err = srv.UpdateServer(s)
+			err = srv.Import(s)
 			if err != nil {
 				log.Fatalln("There was an error while trying to update the server:", err)
 			}
@@ -52,7 +52,7 @@ func main() {
 	}
 }
 
-func (srv *server) UpdateServer(s *grpc.Server) error {
+func (srv *server) Import(s *grpc.Server) error {
 	agents, err := srv.Service.GetInsuranceAgentsFromAms()
 	if err != nil {
 		log.Fatalf("There was an unexpected error on GetInsuranceAgentsFromAms: %v\n", err)
