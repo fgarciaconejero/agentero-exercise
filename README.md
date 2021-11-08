@@ -18,3 +18,11 @@ You must have Go installed and it's advised that the Go extension for VS Code is
 3° - Use the following command to run the Agentero server: `go run .\agentero\server\server.go` (or `go run ./agentero/server/server.go` if you are using MacOS)
 
 4° - Use the following command to run the Agentero client: `go run .\agentero\client\client.go` (or `go run ./agentero/client/client.go` if you are using MacOS)
+
+5° You are ready to go! You should be able to send requests to the different endpoints successfully now!
+
+To get the policy holders (and their insurance policies) related to an agent, send a request to `/getById/:agentId`  
+__Although you can try with whatever agent id you like, the available agents' ids are: "1", "2", "3" (unless you were to add more in `./ams/resources/mocks/agents_mock.go`)__
+
+To get a specific policy holder (and its insurance policies) send a request to `/getByMobileNumber/:mobileNumber`  
+__Although you can try whatever mobile number you like, the ones that will retrieve data are: "1234567890", "1234567891", "1234567892", "1234567893", "1234567894" (unless you were to add more in `./ams/resources/mocks/policies_mock.go` and `./ams/resources/mocks/users_mock.go`)__
