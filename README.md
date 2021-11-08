@@ -9,7 +9,7 @@ In order to try it, you'll need to run the AMS client, then the Agentero client 
 It's recommended to run the AMS client **first** given that the server will retrieve information from it at start up. However, as the server retrieves the information every 5 minutes, it's not necessary, but, if you don't do it in that order, you may have to wait for the server to retrieve the information before you receive anything when making calls to the Agentero client.
 
 ## Prerequisites
-You must have Go installed and it's advised that the Go extension for VS Code is installed too. The rest of the dependecies should be installed by themselves when running the services for the first time.
+You must have Go installed and a GGC compiler (like `https://jmeubank.github.io/tdm-gcc/download/`). The rest of the dependecies should be installed by themselves when running the services for the first time.
 
 1° **If you are in Mac**, please go to the file `./agentero/config/config.go`, **comment** the url-related variables that are **uncommented** and then **uncomment** the ones that were previously **commented**
 
