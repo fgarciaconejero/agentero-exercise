@@ -5,16 +5,10 @@ import (
 	"fmt"
 
 	"github.com/agentero-exercise/agentero/domain/models"
+	"github.com/agentero-exercise/agentero/resources/constants"
 	"github.com/agentero-exercise/agentero/resources/protos"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-const getPolicyHoldersSQL string = `SELECT * FROM policy_holders`
-const getInsurancePoliciesByIdSQL string = `SELECT * FROM insurance_policies WHERE agent_id = ?`
-const getInsurancePoliciesByMobileNumberSQL string = `SELECT * FROM insurance_policies WHERE ip_mobile_number = ?`
-const insertPolicyHolderSQL string = `INSERT INTO policy_holders(name, ph_mobile_number) VALUES (?, ?) ON CONFLICT(ph_mobile_number) DO UPDATE SET name = ?`
-const insertInsurancePolicySQL string = `INSERT INTO insurance_policies(ip_mobile_number, premium, type, agent_id) VALUES (?, ?, ?, ?) ON CONFLICT(ip_id) DO UPDATE SET ip_mobile_number = ?, premium = ?, type = ?, agent_id = ?`
-const insertInsuranceAgentSQL string = `INSERT INTO insurance_agents(agent_id, name) VALUES (?, ?) ON CONFLICT(agent_id) DO UPDATE SET name = ?`
 
 type Repository struct {
 	Db sql.DB
@@ -32,7 +26,7 @@ func NewRepository() (*Repository, error) {
 }
 
 func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err error) {
-	rows, err := r.Db.Query(getPolicyHoldersSQL)
+	rows, err := r.Db.Query(constants.GetPolicyHoldersSQL)
 	if err != nil {
 		fmt.Println("There was a problem while trying to get policy holders from SQLite,", err)
 		return
@@ -49,7 +43,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 	}
 
 	for i, v := range phs {
-		rows, err = r.Db.Query(getInsurancePoliciesByIdSQL, agentId)
+		rows, err = r.Db.Query(constants.GetInsurancePoliciesByIdSQL, agentId)
 		fmt.Println("There was a problem while trying to get insurance policies from SQLite,", err)
 		if err != nil {
 			return
@@ -75,7 +69,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 }
 
 func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHolder, err error) {
-	rows, err := r.Db.Query(getPolicyHoldersSQL)
+	rows, err := r.Db.Query(constants.GetPolicyHoldersSQL)
 	if err != nil {
 		fmt.Println("There was a problem while trying to get policy holders from SQLite,", err)
 		return
@@ -95,7 +89,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 		}
 	}
 
-	rows, err = r.Db.Query(getInsurancePoliciesByMobileNumberSQL, mobileNumber)
+	rows, err = r.Db.Query(constants.GetInsurancePoliciesByMobileNumberSQL, mobileNumber)
 	if err != nil {
 		return
 	}
@@ -141,9 +135,9 @@ func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
 }
 
 func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) (err error) {
-	_, err = r.Db.Exec(insertPolicyHolderSQL, ph.Name, ph.MobileNumber, ph.Name)
+	_, err = r.Db.Exec(constants.InsertPolicyHolderSQL, ph.Name, ph.MobileNumber, ph.Name)
 	if err != nil {
-		fmt.Println("There was a problem executing the insertPolicyHolderSQL statement,", err)
+		fmt.Println("There was a problem executing the InsertPolicyHolderSQL statement,", err)
 		return err
 	}
 
@@ -151,7 +145,7 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) (err error) {
 }
 
 func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId string) (err error) {
-	_, err = r.Db.Exec(insertInsurancePolicySQL, ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.MobileNumber, ip.Premium, ip.Type, agentId)
+	_, err = r.Db.Exec(constants.InsertInsurancePolicySQL, ip.MobileNumber, ip.Premium, ip.Type, agentId, ip.MobileNumber, ip.Premium, ip.Type, agentId)
 	if err != nil {
 		fmt.Println("There was a problem executing the insertInsurancePolicySQL statement,", err)
 		return err
@@ -161,9 +155,9 @@ func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId s
 }
 
 func (r *Repository) UpsertInsuranceAgent(agent *models.Agent) (err error) {
-	_, err = r.Db.Exec(insertInsuranceAgentSQL, agent.Id, agent.Name, agent.Id)
+	_, err = r.Db.Exec(constants.InsertInsuranceAgentSQL, agent.Id, agent.Name, agent.Id)
 	if err != nil {
-		fmt.Println("There was a problem executing the insertInsuranceAgentSQL statement,", err)
+		fmt.Println("There was a problem executing the InsertInsuranceAgentSQL statement,", err)
 		return
 	}
 
