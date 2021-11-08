@@ -162,3 +162,34 @@ func TestGetByMobileNumber(t *testing.T) {
 		assert.Equal(t, tt.expectedResult, res)
 	}
 }
+
+var getAllInsuranceAgentsIdsTestingParameters = []struct {
+	name            string
+	sqlExpectations func(sqlmock.Sqlmock)
+	expectedResult  []string
+	err             error
+}{
+	{
+		"success",
+		func(mock sqlmock.Sqlmock) {
+			rows := sqlmock.NewRows([]string{"agent_id", "name"}).AddRow("some-agent-id", "some-name")
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetAllInsuranceAgentsSQL)).WillReturnRows(rows)
+		},
+		[]string{"some-agent-id"},
+		nil,
+	},
+}
+
+func TestGetAllInsuranceAgentsIds(t *testing.T) {
+	db, mock := NewMockDB()
+	r := &repository.Repository{Db: *db}
+	defer r.Db.Close()
+	for _, tt := range getAllInsuranceAgentsIdsTestingParameters {
+		tt.sqlExpectations(mock)
+		res, err := r.GetAllInsuranceAgentsIds()
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
+		}
+		assert.Equal(t, tt.expectedResult, res)
+	}
+}
