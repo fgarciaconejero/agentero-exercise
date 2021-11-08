@@ -7,6 +7,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/agentero-exercise/agentero/config"
 	"github.com/agentero-exercise/agentero/repository"
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/agentero-exercise/agentero/service"
@@ -43,7 +44,7 @@ func main() {
 			if err != nil {
 				log.Fatalln("There was an error while trying to update the server:", err)
 			}
-			time.Sleep(5 * time.Minute)
+			time.Sleep(time.Duration(*config.SchedulePeriodFlag) * time.Minute)
 		}
 	}()
 
