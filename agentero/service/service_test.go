@@ -14,6 +14,7 @@ import (
 	"github.com/agentero-exercise/agentero/resources/protos"
 	"github.com/agentero-exercise/agentero/service"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 // This function servers as a BeforeEach() / Init() / SetUp() to run before tests and initialize stuff
@@ -52,10 +53,8 @@ func TestGetPolicyHoldersFromAms(t *testing.T) {
 	for _, tt := range getPolicyHoldersFromAmsTestingParameters {
 		s := service.NewService(&tt.repository)
 		res, err := s.GetPolicyHoldersFromAms(tt.id)
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
 		}
 		if !reflect.DeepEqual(res, tt.expected) {
 			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
@@ -90,10 +89,8 @@ func TestGetInsurancePoliciesFromAms(t *testing.T) {
 	for _, tt := range getInsurancePoliciesFromAmsTestingParameters {
 		s := service.NewService(&tt.repository)
 		res, err := s.GetInsurancePoliciesFromAms(tt.id)
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
 		}
 		if !reflect.DeepEqual(res, tt.expected) {
 			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
@@ -121,10 +118,8 @@ func TestGetInsuranceAgentsFromAms(t *testing.T) {
 	for _, tt := range getInsuranceAgentsFromAmsTestingParameters {
 		s := service.NewService(&tt.repository)
 		res, err := s.GetInsuranceAgentsFromAms()
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
 		}
 		if !reflect.DeepEqual(res, tt.expected) {
 			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)

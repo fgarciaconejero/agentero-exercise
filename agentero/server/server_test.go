@@ -8,6 +8,7 @@ import (
 
 	"github.com/agentero-exercise/agentero/domain/models"
 	"github.com/agentero-exercise/agentero/resources/protos"
+	"github.com/stretchr/testify/assert"
 )
 
 var getFromAmsTestingParameters = []struct {
@@ -76,10 +77,8 @@ func TestGetPolicyHoldersAndInsurancePoliciesFromAms(t *testing.T) {
 		s := NewServer(&tt.service)
 
 		res, err := s.GetPolicyHoldersAndInsurancePoliciesFromAms(tt.id)
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
 		}
 		if !reflect.DeepEqual(res, tt.expected) {
 			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
@@ -144,10 +143,8 @@ func TestGetContactsAndPoliciesById(t *testing.T) {
 			InsuranceAgentId: tt.id,
 		}
 		res, err := s.GetContactAndPoliciesById(context.Background(), &req)
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
 		}
 		if !reflect.DeepEqual(res, tt.expected) {
 			t.Errorf("Test '%v' failed! res: %v,\n expected: %v\n", tt.name, res, tt.expected)
@@ -199,10 +196,8 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 		}
 
 		res, err := s.GetContactsAndPoliciesByMobileNumber(context.Background(), &req)
-		// Lint warns not to use DeepEqual on error, but every other way doesn't work or panics because
-		// in the case of the error being nil there is a nil pointer exception
-		if !reflect.DeepEqual(err, tt.err) {
-			t.Errorf("Test '%v' failed! err: %v, expected: %v\n", tt.name, err, tt.err)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
 		}
 
 		if !reflect.DeepEqual(res, tt.expected) {
