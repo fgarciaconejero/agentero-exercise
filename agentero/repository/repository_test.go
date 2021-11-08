@@ -38,11 +38,10 @@ var getByIdTestingParameters = []struct {
 
 			mock.ExpectQuery(regexp.QuoteMeta(constants.GetPolicyHoldersSQL)).WillReturnRows(rows)
 
-			getInsurancePoliciesByIdSQL := `SELECT * FROM insurance_policies WHERE agent_id = ?`
 			rows = sqlmock.NewRows([]string{"ip_id", "ip_mobile_number", "premium", "type", "agent_id"}).
 				AddRow("some-ip-id", "000000001", 0, "some-type", "some-agent-id")
 
-			mock.ExpectQuery(regexp.QuoteMeta(getInsurancePoliciesByIdSQL)).WillReturnRows(rows)
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetInsurancePoliciesByIdSQL)).WillReturnRows(rows)
 		},
 		[]*protos.PolicyHolder{
 			{
