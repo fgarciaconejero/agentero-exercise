@@ -112,8 +112,7 @@ func (r *Repository) GetByMobileNumber(mobileNumber string) (ph *protos.PolicyHo
 }
 
 func (r *Repository) GetAllInsuranceAgentsIds() (result []string, err error) {
-	getAllInsuranceAgentsSQL := `SELECT * FROM insurance_agents`
-	rows, err := r.Db.Query(getAllInsuranceAgentsSQL)
+	rows, err := r.Db.Query(constants.GetAllInsuranceAgentsSQL)
 	if err != nil {
 		fmt.Println("There was an error getting insurance agents", err.Error())
 		return
