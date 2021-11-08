@@ -178,6 +178,14 @@ var getAllInsuranceAgentsIdsTestingParameters = []struct {
 		[]string{"some-agent-id"},
 		nil,
 	},
+	{
+		"getAllInsuranceAgentsSQL returns an error",
+		func(mock sqlmock.Sqlmock) {
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetAllInsuranceAgentsSQL)).WillReturnError(errors.New("GetAllInsuranceAgentsSQL returned an error"))
+		},
+		nil,
+		errors.New("GetAllInsuranceAgentsSQL returned an error"),
+	},
 }
 
 func TestGetAllInsuranceAgentsIds(t *testing.T) {
