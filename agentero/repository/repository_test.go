@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"regexp"
 	"testing"
@@ -59,15 +60,15 @@ var getByIdTestingParameters = []struct {
 		},
 		nil,
 	},
-	// {
-	// 	"getPolicyHoldersSQL will return error",
-	// 	"some-agent-id",
-	// 	func(mock sqlmock.Sqlmock) {
-
-	// 	},
-	// 	nil,
-	// 	errors.New("there was a problem while trying to get policy holders"),
-	// },
+	{
+		"getPolicyHoldersSQL will return error",
+		"some-agent-id",
+		func(mock sqlmock.Sqlmock) {
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetPolicyHoldersSQL)).WillReturnError(errors.New("there was a problem while trying to get policy holders"))
+		},
+		nil,
+		errors.New("there was a problem while trying to get policy holders"),
+	},
 }
 
 func TestGetById(t *testing.T) {
