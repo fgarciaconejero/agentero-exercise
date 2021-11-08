@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"testing"
 	"time"
 
@@ -56,9 +55,7 @@ func TestGetPolicyHoldersFromAms(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
-		}
+		assert.Equal(t, res, tt.expected)
 	}
 }
 
@@ -92,9 +89,7 @@ func TestGetInsurancePoliciesFromAms(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
-		}
+		assert.Equal(t, res, tt.expected)
 	}
 }
 
@@ -121,9 +116,7 @@ func TestGetInsuranceAgentsFromAms(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
-		}
+		assert.Equal(t, res, tt.expected)
 	}
 }
 
