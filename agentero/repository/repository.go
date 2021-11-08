@@ -140,7 +140,7 @@ func (r *Repository) UpsertPolicyHolder(ph *protos.PolicyHolder) (err error) {
 		return err
 	}
 
-	return nil
+	return
 }
 
 func (r *Repository) UpsertInsurancePolicy(ip *protos.InsurancePolicy, agentId string) (err error) {

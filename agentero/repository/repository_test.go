@@ -215,7 +215,8 @@ var upsertPolicyHolderTestingParameters = []struct {
 			Name:         "some-name",
 		},
 		func(mock sqlmock.Sqlmock) {
-			mock.ExpectExec(regexp.QuoteMeta(constants.InsertPolicyHolderSQL))
+			result := sqlmock.NewResult(0, 0)
+			mock.ExpectExec(regexp.QuoteMeta(constants.InsertPolicyHolderSQL)).WillReturnResult(result)
 		},
 		nil,
 	},
