@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"reflect"
 	"testing"
 
 	"github.com/agentero-exercise/agentero/domain/models"
@@ -80,9 +79,7 @@ func TestGetPolicyHoldersAndInsurancePoliciesFromAms(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test '%v' failed! \nres: %v,\n expected: %v\n", tt.name, res, tt.expected)
-		}
+		assert.Equal(t, res, tt.expected)
 	}
 }
 
@@ -146,9 +143,7 @@ func TestGetContactsAndPoliciesById(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test '%v' failed! res: %v,\n expected: %v\n", tt.name, res, tt.expected)
-		}
+		assert.Equal(t, res, tt.expected)
 	}
 }
 
@@ -199,10 +194,7 @@ func TestGetContactsAndPoliciesByMobileNumber(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("Test '%v' failed! res: %v,\n expected: %v\n", tt.name, res, tt.expected)
-		}
+		assert.Equal(t, res, tt.expected)
 	}
 }
 
