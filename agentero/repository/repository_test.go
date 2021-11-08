@@ -90,7 +90,54 @@ func TestGetById(t *testing.T) {
 		if tt.err != nil {
 			assert.EqualError(t, err, tt.err.Error())
 		}
-		assert.Equal(t, res, tt.expectedResult)
+		assert.Equal(t, tt.expectedResult, res)
 	}
+}
 
+var getByMobileNumberTestingParameters = []struct {
+	name            string
+	mobileNumber    string
+	sqlExpectations func(sqlmock.Sqlmock)
+	expectedResult  *protos.PolicyHolder
+	err             error
+}{
+	{
+		"successful",
+		"000000001",
+		func(mock sqlmock.Sqlmock) {
+			rows := sqlmock.NewRows([]string{"name", "ph_mobile_number"}).AddRow("some-name", "000000001")
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetPolicyHoldersSQL)).WillReturnRows(rows)
+
+			rows = sqlmock.NewRows([]string{"ip_id", "ip_mobile_number", "premium", "type", "agent_id"}).
+				AddRow("some-ip-id", "000000001", 0, "some-type", "some-agent-id")
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetInsurancePoliciesByIdSQL)).WillReturnRows(rows)
+		},
+		&protos.PolicyHolder{
+			Name:         "some-name",
+			MobileNumber: "000000001",
+			InsurancePolicy: []*protos.InsurancePolicy{
+				{
+					MobileNumber: "000000001",
+					Premium:      0,
+					Type:         "some-type",
+					AgentId:      "some-agent-id",
+				},
+			},
+		},
+		nil,
+	},
+}
+
+func TestGetByMobileNumber(t *testing.T) {
+	db, mock := NewMockDB()
+	r := &repository.Repository{Db: *db}
+	defer r.Db.Close()
+	for _, tt := range getByMobileNumberTestingParameters {
+		tt.sqlExpectations(mock)
+		res, err := r.GetByMobileNumber(tt.mobileNumber)
+		if tt.err != nil {
+			assert.EqualError(t, err, tt.err.Error())
+		}
+		assert.Equal(t, tt.expectedResult, res)
+	}
 }
