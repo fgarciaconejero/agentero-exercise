@@ -35,12 +35,10 @@ var getByIdTestingParameters = []struct {
 		"some-agent-id",
 		func(mock sqlmock.Sqlmock) {
 			rows := sqlmock.NewRows([]string{"name", "ph_mobile_number"}).AddRow("some-name", "000000001")
-
 			mock.ExpectQuery(regexp.QuoteMeta(constants.GetPolicyHoldersSQL)).WillReturnRows(rows)
 
 			rows = sqlmock.NewRows([]string{"ip_id", "ip_mobile_number", "premium", "type", "agent_id"}).
 				AddRow("some-ip-id", "000000001", 0, "some-type", "some-agent-id")
-
 			mock.ExpectQuery(regexp.QuoteMeta(constants.GetInsurancePoliciesByIdSQL)).WillReturnRows(rows)
 		},
 		[]*protos.PolicyHolder{
@@ -67,6 +65,18 @@ var getByIdTestingParameters = []struct {
 		},
 		nil,
 		errors.New("there was a problem while trying to get policy holders"),
+	},
+	{
+		"getInsurancePoliciesByIdSQL will return error",
+		"some-agent-id",
+		func(mock sqlmock.Sqlmock) {
+			rows := sqlmock.NewRows([]string{"name", "ph_mobile_number"}).AddRow("some-name", "000000001")
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetPolicyHoldersSQL)).WillReturnRows(rows)
+
+			mock.ExpectQuery(regexp.QuoteMeta(constants.GetInsurancePoliciesByIdSQL)).WillReturnError(errors.New("there was a problem while trying to get insurance policies"))
+		},
+		nil,
+		errors.New("there was a problem while trying to get insurance policies"),
 	},
 }
 

@@ -46,7 +46,7 @@ func (r *Repository) GetById(agentId string) (phs []*protos.PolicyHolder, err er
 		rows, err = r.Db.Query(constants.GetInsurancePoliciesByIdSQL, agentId)
 		if err != nil {
 			fmt.Println("There was a problem while trying to get insurance policies from SQLite,", err)
-			return
+			return nil, err
 		}
 
 		for rows.Next() {
