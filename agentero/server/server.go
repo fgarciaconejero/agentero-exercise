@@ -43,7 +43,7 @@ func main() {
 			if err != nil {
 				log.Fatalln("There was an error while trying to update the server:", err)
 			}
-			time.Sleep(5 * time.Second)
+			time.Sleep(5 * time.Minute)
 		}
 	}()
 
